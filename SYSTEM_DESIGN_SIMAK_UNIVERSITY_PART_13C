@@ -1,0 +1,731 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_13C.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 13C
+>
+> Module : Billing, Payment Gateway & Financial API
+>
+> Backend : Java 17 + Spring Boot 3.x
+>
+> Database : PostgreSQL 16+
+>
+> Status : Production Ready
+>
+> Payment Architecture : Backend Driven
+
+---
+
+# 668. Overview
+
+Seluruh proses pembayaran dikendalikan oleh backend.
+
+Frontend tidak boleh mengetahui detail implementasi payment gateway.
+
+Backend dapat menggunakan:
+
+- Midtrans
+- Xendit
+- DOKU
+- Faspay
+- Tripay
+- iPaymu
+- Bank Host to Host
+- Payment Gateway Internal
+
+tanpa perlu mengubah aplikasi Flutter.
+
+---
+
+# 669. Payment Flow
+
+```
+Tagihan
+
+↓
+
+Pilih Tagihan
+
+↓
+
+Lihat Detail
+
+↓
+
+Klik Bayar
+
+↓
+
+Ambil Payment Method
+
+↓
+
+Pilih Metode Pembayaran
+
+↓
+
+Generate Payment
+
+↓
+
+Payment Gateway
+
+↓
+
+Callback
+
+↓
+
+Update Status
+
+↓
+
+Push Notification
+
+↓
+
+Refresh Billing
+```
+
+---
+
+# 670. Billing List
+
+```
+GET
+
+/student/billings
+```
+
+Support
+
+```
+page
+
+limit
+
+search
+
+status
+
+semesterId
+```
+
+---
+
+# 671. Billing Response
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "billingId": 1,
+      "invoiceNumber": "INV202600001",
+      "title": "SPP Semester Ganjil",
+      "category": "SPP",
+      "amount": 3500000,
+      "paidAmount": 0,
+      "remainingAmount": 3500000,
+      "dueDate": "2026-08-20",
+      "status": "UNPAID"
+    }
+  ]
+}
+```
+
+---
+
+# 672. Billing Status
+
+```
+UNPAID
+
+PARTIAL
+
+PAID
+
+EXPIRED
+
+CANCELLED
+
+REFUNDED
+```
+
+---
+
+# 673. Billing Detail
+
+```
+GET
+
+/student/billings/{billingId}
+```
+
+Menampilkan
+
+- Nomor Invoice
+- Semester
+- Komponen Biaya
+- Denda
+- Diskon
+- Total
+- Status
+- Jatuh Tempo
+- Riwayat Pembayaran
+
+---
+
+# 674. Billing Component
+
+Backend dapat mengirim.
+
+- SPP
+- SKS
+- Laboratorium
+- Praktikum
+- Wisuda
+- Perpustakaan
+- Asuransi
+- UTS
+- UAS
+- Daftar Ulang
+- PKL
+- Skripsi
+- Yudisium
+- Lainnya
+
+Frontend tidak boleh hardcode.
+
+---
+
+# 675. Payment Method
+
+```
+GET
+
+/payment-methods
+```
+
+Query.
+
+```
+billingId
+
+platform
+
+appVersion
+```
+
+---
+
+# 676. Payment Method Response
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "bca_va",
+      "name": "BCA Virtual Account",
+      "type": "VA",
+      "icon": "https://...",
+      "fee": 4000,
+      "active": true,
+      "sort": 1
+    },
+    {
+      "id": "bni_va",
+      "name": "BNI Virtual Account",
+      "type": "VA",
+      "icon": "https://...",
+      "fee": 4000,
+      "active": true,
+      "sort": 2
+    },
+    {
+      "id": "bri_va",
+      "name": "BRI Virtual Account",
+      "type": "VA",
+      "icon": "https://..."
+    },
+    {
+      "id": "mandiri_va",
+      "name": "Mandiri Virtual Account",
+      "type": "VA",
+      "icon": "https://..."
+    },
+    {
+      "id": "permata_va",
+      "name": "Permata Virtual Account",
+      "type": "VA",
+      "icon": "https://..."
+    },
+    {
+      "id": "qris",
+      "name": "QRIS",
+      "type": "QRIS",
+      "icon": "https://..."
+    },
+    {
+      "id": "gopay",
+      "name": "GoPay",
+      "type": "EWALLET",
+      "icon": "https://..."
+    },
+    {
+      "id": "ovo",
+      "name": "OVO",
+      "type": "EWALLET",
+      "icon": "https://..."
+    },
+    {
+      "id": "dana",
+      "name": "DANA",
+      "type": "EWALLET",
+      "icon": "https://..."
+    },
+    {
+      "id": "shopeepay",
+      "name": "ShopeePay",
+      "type": "EWALLET",
+      "icon": "https://..."
+    }
+  ]
+}
+```
+
+---
+
+# 677. Payment Method Rule
+
+Seluruh metode pembayaran berasal dari backend.
+
+Frontend hanya melakukan render.
+
+Backend dapat:
+
+- Menambah metode pembayaran
+- Menghapus metode pembayaran
+- Mengubah urutan
+- Mengubah icon
+- Menonaktifkan metode tertentu
+
+tanpa update aplikasi.
+
+---
+
+# 678. Create Payment
+
+```
+POST
+
+/payments
+```
+
+Body.
+
+```json
+{
+  "billingId": 100,
+  "paymentMethodId": "bca_va"
+}
+```
+
+---
+
+# 679. Create Payment Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "paymentId": 1000,
+    "invoiceNumber": "INV202600001",
+    "paymentStatus": "PENDING",
+    "expiredAt": "2026-07-28T10:00:00Z",
+    "paymentInstruction": {},
+    "redirectUrl": null
+  }
+}
+```
+
+---
+
+# 680. Payment Instruction
+
+Backend mengirim sesuai payment gateway.
+
+Virtual Account
+
+```json
+{
+  "type":"VA",
+  "bank":"BCA",
+  "virtualAccount":"1234567890123456"
+}
+```
+
+QRIS
+
+```json
+{
+  "type":"QRIS",
+  "qrImage":"https://..."
+}
+```
+
+E-Wallet
+
+```json
+{
+  "type":"EWALLET",
+  "redirectUrl":"https://..."
+}
+```
+
+---
+
+# 681. Payment Detail
+
+```
+GET
+
+/payments/{paymentId}
+```
+
+---
+
+# 682. Payment History
+
+```
+GET
+
+/student/payment-history
+```
+
+Support.
+
+- Search
+- Pagination
+- Semester
+- Status
+
+---
+
+# 683. Payment History Detail
+
+```
+GET
+
+/student/payment-history/{paymentId}
+```
+
+---
+
+# 684. Invoice
+
+```
+GET
+
+/invoices/{invoiceNumber}
+```
+
+---
+
+# 685. Download Invoice
+
+```
+GET
+
+/invoices/{invoiceNumber}/download
+```
+
+Response.
+
+```
+PDF
+```
+
+---
+
+# 686. Refresh Payment Status
+
+```
+GET
+
+/payments/{paymentId}/status
+```
+
+Digunakan ketika user membuka halaman pembayaran.
+
+---
+
+# 687. Payment Status Enum
+
+```
+PENDING
+
+SUCCESS
+
+FAILED
+
+EXPIRED
+
+CANCELLED
+
+REFUNDED
+```
+
+---
+
+# 688. Payment Notification
+
+Jika pembayaran berhasil.
+
+Backend.
+
+- Update Database
+- Kirim OneSignal
+- Simpan Notification Center
+- Update Dashboard
+- Update Billing
+
+---
+
+# 689. Payment Callback
+
+Flow.
+
+```
+Gateway
+
+↓
+
+Backend Callback
+
+↓
+
+Verify Signature
+
+↓
+
+Update Payment
+
+↓
+
+Generate Receipt
+
+↓
+
+Send Notification
+
+↓
+
+Done
+```
+
+Flutter **tidak pernah menerima callback langsung** dari gateway.
+
+---
+
+# 690. Payment Security
+
+Frontend tidak boleh mengirim.
+
+- Nominal
+- Diskon
+- Fee
+- Denda
+
+Backend menghitung seluruh nominal pembayaran.
+
+---
+
+# 691. Payment Expired
+
+Jika pembayaran kadaluarsa.
+
+Status berubah menjadi.
+
+```
+EXPIRED
+```
+
+User dapat membuat pembayaran baru.
+
+---
+
+# 692. Retry Payment
+
+```
+POST
+
+/payments/{paymentId}/retry
+```
+
+Backend membuat transaksi baru jika diperlukan.
+
+---
+
+# 693. Cancel Payment
+
+```
+POST
+
+/payments/{paymentId}/cancel
+```
+
+Hanya jika status masih.
+
+```
+PENDING
+```
+
+---
+
+# 694. Payment Receipt
+
+```
+GET
+
+/payments/{paymentId}/receipt
+```
+
+Response.
+
+```
+PDF
+```
+
+---
+
+# 695. Backend Driven Payment
+
+Backend menentukan.
+
+- Payment Method
+- Fee
+- Logo
+- Instruction
+- Expired Time
+- Payment Gateway
+
+Frontend hanya melakukan render.
+
+---
+
+# 696. Production Rules
+
+Frontend tidak boleh.
+
+- Hardcode Bank
+- Hardcode QRIS
+- Hardcode E-Wallet
+- Hardcode Payment Gateway
+- Hardcode Fee
+- Hardcode Instruction
+
+Semua berasal dari API.
+
+---
+
+# 697. Future Ready
+
+Mudah ditambahkan.
+
+- Apple Pay
+- Google Pay
+- Kartu Kredit
+- Kartu Debit
+- Direct Debit
+- BI-FAST
+- VA Bank Daerah
+- PayLater
+- Cicilan
+- Beasiswa
+- Voucher
+- Promo
+- Split Payment
+- Partial Payment
+- Auto Debit
+
+Tanpa mengubah arsitektur Flutter.
+
+---
+
+# 698. Backend Recommendation
+
+Disarankan membuat modul.
+
+```
+Payment Gateway Interface
+
+↓
+
+Midtrans Adapter
+
+↓
+
+Xendit Adapter
+
+↓
+
+Tripay Adapter
+
+↓
+
+DOKU Adapter
+
+↓
+
+Faspay Adapter
+```
+
+Menggunakan Strategy Pattern.
+
+Dengan demikian pergantian payment gateway tidak memengaruhi API yang dikonsumsi aplikasi mobile.
+
+---
+
+# 699. Production Checklist
+
+- Dynamic Billing
+- Dynamic Payment Method
+- Dynamic Fee
+- Dynamic Instruction
+- Payment History
+- Invoice PDF
+- Receipt PDF
+- OneSignal Notification
+- Callback Verification
+- Retry Payment
+- Cancel Payment
+- Expired Payment
+- Backend Driven Payment
+
+---
+
+# 700. Next Part
+
+**SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_13D.md**
+
+Materi selanjutnya:
+
+- Notification API
+- OneSignal Integration
+- CMS API
+- Dynamic Menu API
+- Dynamic Dashboard API
+- Banner API
+- Feature Flag API
+- Remote Config API
+- FAQ API
+- Contact Us API
+- Survey API
+- News API
+- Announcement API
+- Settings API
+- Complete Backend Driven UI Specification

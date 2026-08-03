@@ -1,0 +1,802 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_13B.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 13B
+>
+> Module : Student Dashboard, Academic Module & Lecturer Dashboard API
+>
+> Backend : Java 17 + Spring Boot 3.x
+>
+> Database : PostgreSQL 16+
+>
+> Status : Production Ready
+
+---
+
+# 616. Overview
+
+Dokumen ini mendefinisikan seluruh endpoint akademik utama yang digunakan oleh mahasiswa dan dosen.
+
+Seluruh endpoint private wajib menggunakan JWT.
+
+```
+Authorization: Bearer {access_token}
+```
+
+---
+
+# 617. Dashboard Student
+
+```
+GET
+
+/dashboard/student
+```
+
+---
+
+# 618. Dashboard Student Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "profile": {},
+    "summary": {},
+    "todaySchedule": [],
+    "announcement": [],
+    "billing": {},
+    "notification": {},
+    "quickMenu": [],
+    "banner": []
+  }
+}
+```
+
+---
+
+# 619. Dashboard Summary
+
+Berisi informasi.
+
+- Semester Aktif
+- Total SKS
+- IP Semester
+- IPK
+- Tagihan Belum Dibayar
+- Jadwal Hari Ini
+- Jumlah Notifikasi
+
+---
+
+# 620. Dashboard Lecturer
+
+```
+GET
+
+/dashboard/lecturer
+```
+
+---
+
+# 621. Dashboard Lecturer Response
+
+Berisi.
+
+- Jadwal Mengajar Hari Ini
+- Mata Kuliah Aktif
+- Total Mahasiswa
+- Kelas Hari Ini
+- Pengumuman
+- Quick Menu
+
+---
+
+# 622. Academic Calendar
+
+```
+GET
+
+/academic-calendar
+```
+
+Support.
+
+- Pagination
+- Search
+- Filter Tahun Akademik
+
+---
+
+# 623. Academic Calendar Detail
+
+```
+GET
+
+/academic-calendar/{id}
+```
+
+---
+
+# 624. Current Semester
+
+```
+GET
+
+/academic/current-semester
+```
+
+Response.
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 12,
+    "name": "2026/2027 Ganjil",
+    "status": "ACTIVE"
+  }
+}
+```
+
+---
+
+# 625. Student Schedule
+
+```
+GET
+
+/student/schedules
+```
+
+Query.
+
+```
+page
+
+limit
+
+search
+
+semesterId
+
+day
+```
+
+---
+
+# 626. Schedule Response
+
+Setiap item.
+
+```json
+{
+  "id":1,
+  "courseCode":"IF101",
+  "courseName":"Pemrograman Mobile",
+  "lecturer":"Dr. Ahmad",
+  "day":"Senin",
+  "startTime":"08:00",
+  "endTime":"09:40",
+  "room":"Lab 2",
+  "credits":3
+}
+```
+
+---
+
+# 627. Schedule Detail
+
+```
+GET
+
+/student/schedules/{id}
+```
+
+---
+
+# 628. Study Plan (KRS)
+
+```
+GET
+
+/student/krs
+```
+
+---
+
+# 629. KRS Detail
+
+```
+GET
+
+/student/krs/{semesterId}
+```
+
+---
+
+# 630. Submit KRS
+
+```
+POST
+
+/student/krs/submit
+```
+
+Body.
+
+```json
+{
+    "semesterId":12,
+    "courses":[
+        1,
+        2,
+        3,
+        4
+    ]
+}
+```
+
+---
+
+# 631. Cancel KRS
+
+```
+DELETE
+
+/student/krs/{courseId}
+```
+
+Jika periode masih dibuka.
+
+---
+
+# 632. KRS Validation
+
+Backend melakukan validasi.
+
+- Maksimal SKS
+- Prasyarat
+- Bentrok Jadwal
+- Status Akademik
+
+Frontend hanya menampilkan pesan.
+
+---
+
+# 633. Study Result (KHS)
+
+```
+GET
+
+/student/khs
+```
+
+---
+
+# 634. KHS Detail
+
+```
+GET
+
+/student/khs/{semesterId}
+```
+
+---
+
+# 635. Grade API
+
+```
+GET
+
+/student/grades
+```
+
+Support.
+
+```
+semesterId
+
+page
+
+limit
+```
+
+---
+
+# 636. Grade Detail
+
+```
+GET
+
+/student/grades/{courseId}
+```
+
+Berisi.
+
+- Tugas
+- Quiz
+- Praktikum
+- UTS
+- UAS
+- Nilai Akhir
+
+---
+
+# 637. GPA (IP)
+
+```
+GET
+
+/student/gpa
+```
+
+---
+
+# 638. GPA Response
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "semester":"2025 Ganjil",
+      "gpa":3.75
+    }
+  ]
+}
+```
+
+---
+
+# 639. CGPA (IPK)
+
+```
+GET
+
+/student/cgpa
+```
+
+---
+
+# 640. CGPA Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "cgpa":3.82,
+    "totalCredits":132
+  }
+}
+```
+
+---
+
+# 641. Course List
+
+```
+GET
+
+/courses
+```
+
+Support.
+
+- Search
+- Pagination
+- Filter
+
+---
+
+# 642. Course Detail
+
+```
+GET
+
+/courses/{id}
+```
+
+---
+
+# 643. Transcript
+
+```
+GET
+
+/student/transcript
+```
+
+---
+
+# 644. Transcript Download
+
+```
+GET
+
+/student/transcript/download
+```
+
+Response.
+
+```
+PDF
+```
+
+---
+
+# 645. Leave Request (Cuti)
+
+```
+GET
+
+/student/leave
+```
+
+---
+
+# 646. Leave Detail
+
+```
+GET
+
+/student/leave/{id}
+```
+
+---
+
+# 647. Submit Leave
+
+```
+POST
+
+/student/leave
+```
+
+Body.
+
+```json
+{
+  "semesterId":12,
+  "reason":"Keperluan keluarga"
+}
+```
+
+Support upload lampiran.
+
+---
+
+# 648. Cancel Leave
+
+```
+DELETE
+
+/student/leave/{id}
+```
+
+---
+
+# 649. Leave Status
+
+Status.
+
+```
+PENDING
+
+APPROVED
+
+REJECTED
+
+CANCELLED
+```
+
+---
+
+# 650. Lecturer Teaching Schedule
+
+```
+GET
+
+/lecturer/schedules
+```
+
+Support.
+
+- Search
+- Pagination
+- Semester
+- Hari
+
+---
+
+# 651. Lecturer Course
+
+```
+GET
+
+/lecturer/courses
+```
+
+---
+
+# 652. Lecturer Course Detail
+
+```
+GET
+
+/lecturer/courses/{id}
+```
+
+---
+
+# 653. Lecturer Student List
+
+```
+GET
+
+/lecturer/classes/{classId}/students
+```
+
+Support.
+
+- Search
+- Pagination
+
+---
+
+# 654. Lecturer Attendance
+
+```
+GET
+
+/lecturer/attendance/{classId}
+```
+
+---
+
+# 655. Save Attendance
+
+```
+POST
+
+/lecturer/attendance
+```
+
+Body.
+
+```json
+{
+  "meeting":8,
+  "classId":10,
+  "attendance":[]
+}
+```
+
+---
+
+# 656. Lecturer Grade
+
+```
+GET
+
+/lecturer/grades/{classId}
+```
+
+---
+
+# 657. Save Grade
+
+```
+POST
+
+/lecturer/grades
+```
+
+Body.
+
+```json
+{
+  "classId":10,
+  "students":[]
+}
+```
+
+---
+
+# 658. Publish Grade
+
+```
+POST
+
+/lecturer/grades/publish
+```
+
+Body.
+
+```json
+{
+    "classId":10
+}
+```
+
+---
+
+# 659. Grade Components
+
+```
+GET
+
+/lecturer/grade-components/{courseId}
+```
+
+Backend menentukan.
+
+- Kehadiran
+- Tugas
+- Quiz
+- Praktikum
+- UTS
+- UAS
+
+Frontend tidak hardcode.
+
+---
+
+# 660. Attendance Status
+
+Enum.
+
+```
+PRESENT
+
+PERMISSION
+
+SICK
+
+ABSENT
+
+LATE
+```
+
+---
+
+# 661. Search Standard
+
+Semua endpoint list mendukung.
+
+```
+search
+
+page
+
+limit
+
+sort
+
+direction
+```
+
+---
+
+# 662. Meta Response
+
+```json
+{
+  "meta":{
+    "page":1,
+    "limit":20,
+    "totalData":250,
+    "totalPage":13,
+    "hasNext":true
+  }
+}
+```
+
+---
+
+# 663. Security Rules
+
+Backend memvalidasi.
+
+- Hak akses mahasiswa.
+- Hak akses dosen.
+- Semester aktif.
+- Jadwal.
+- Mata kuliah.
+- Kelas.
+
+Frontend tidak boleh menentukan data sendiri.
+
+---
+
+# 664. Audit Log
+
+Backend mencatat aktivitas.
+
+- Submit KRS
+- Batal KRS
+- Submit Cuti
+- Input Nilai
+- Publish Nilai
+- Input Absensi
+
+---
+
+# 665. Performance Rules
+
+Semua endpoint list wajib.
+
+- Pagination
+- Search
+- Filter
+- Sorting
+
+Tidak boleh mengirim seluruh data sekaligus.
+
+---
+
+# 666. Production Checklist
+
+✔ Dashboard Mahasiswa
+
+✔ Dashboard Dosen
+
+✔ Jadwal Kuliah
+
+✔ Jadwal Mengajar
+
+✔ Kalender Akademik
+
+✔ KRS
+
+✔ KHS
+
+✔ Nilai
+
+✔ IP
+
+✔ IPK
+
+✔ Mata Kuliah
+
+✔ Cuti Akademik
+
+✔ Absensi Dosen
+
+✔ Input Nilai
+
+✔ Publish Nilai
+
+✔ Pagination
+
+✔ Search
+
+✔ Filter
+
+✔ Sorting
+
+---
+
+# 667. Next Part
+
+**SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_13C.md**
+
+Akan membahas secara lengkap:
+
+- Billing API
+- Payment API
+- Dynamic Payment Method API
+- Virtual Account API
+- QRIS API
+- E-Wallet API
+- Payment History
+- Invoice API
+- Download Invoice
+- Payment Callback Flow
+- Notification Payment
+- Backend Payment Architecture
+- Midtrans / Xendit / Tripay Integration Ready
+- Backend Driven Payment Method

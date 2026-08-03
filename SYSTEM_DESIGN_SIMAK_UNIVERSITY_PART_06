@@ -1,0 +1,823 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_06.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 06
+>
+> Module : Academic Module (Student)
+>
+> Status : Production Ready
+
+---
+
+# 222. Academic Module Overview
+
+Module Akademik merupakan fitur utama bagi mahasiswa.
+
+Seluruh data akademik berada pada module ini.
+
+Module terdiri dari:
+
+- Jadwal Kuliah
+- Detail Jadwal
+- Kalender Akademik
+- KRS
+- KHS
+- Nilai
+- IP Semester
+- IPK
+- Riwayat Semester
+- Mata Kuliah
+- Dosen Pengampu
+
+---
+
+# 223. Folder Structure
+
+```
+features/
+
+academic/
+
+schedule/
+
+calendar/
+
+krs/
+
+grade/
+
+gpa/
+
+course/
+
+```
+
+Setiap feature memiliki
+
+```
+data/
+
+domain/
+
+presentation/
+```
+
+---
+
+# 224. Common List Standard
+
+Seluruh halaman list WAJIB menggunakan standar berikut.
+
+✔ Search
+
+✔ Pull To Refresh
+
+✔ Infinite Scroll
+
+✔ Pagination
+
+✔ Skeleton Loading
+
+✔ Empty State
+
+✔ Error State
+
+✔ Retry
+
+✔ Back To Top
+
+✔ Debounce Search
+
+✔ Cache
+
+---
+
+# 225. Reusable Pagination Widget
+
+Seluruh list menggunakan
+
+```
+AppPaginationView<T>
+```
+
+Parameter
+
+```
+loadData
+
+search
+
+itemBuilder
+
+skeletonType
+
+emptyWidget
+
+errorWidget
+
+pageSize
+```
+
+Developer tidak perlu membuat pagination lagi.
+
+---
+
+# 226. Schedule Module
+
+Menu
+
+```
+Jadwal Kuliah
+```
+
+---
+
+## Fungsi
+
+Menampilkan seluruh jadwal mahasiswa.
+
+Support
+
+- Harian
+- Mingguan
+- Bulanan (Future)
+
+---
+
+# 227. Schedule API
+
+```
+GET
+
+/student/schedule
+```
+
+Parameter
+
+```
+semester
+
+date
+
+page
+
+limit
+
+search
+```
+
+---
+
+# 228. Schedule Card
+
+Menampilkan
+
+- Nama Mata Kuliah
+- Kode
+- SKS
+- Dosen
+- Hari
+- Jam
+- Gedung
+- Ruangan
+- Status
+
+---
+
+# 229. Schedule Status
+
+Badge
+
+```
+Upcoming
+
+↓
+
+Ongoing
+
+↓
+
+Finished
+
+↓
+
+Cancelled
+```
+
+---
+
+# 230. Schedule Filter
+
+Minimal
+
+```
+Hari
+
+↓
+
+Semester
+
+↓
+
+Mata Kuliah
+```
+
+Future
+
+```
+Dosen
+
+Gedung
+```
+
+---
+
+# 231. Today's Schedule
+
+Menu khusus
+
+```
+Hari Ini
+```
+
+Hanya menampilkan jadwal hari berjalan.
+
+---
+
+# 232. Detail Schedule
+
+Halaman Detail
+
+Berisi
+
+- Mata Kuliah
+- SKS
+- Dosen
+- Hari
+- Jam
+- Ruangan
+- Gedung
+- Semester
+- Deskripsi
+
+Future
+
+- Google Maps Lokasi
+- Materi
+- Zoom Link
+
+---
+
+# 233. Calendar Module
+
+Kalender Akademik.
+
+---
+
+## Event
+
+- Registrasi
+- KRS
+- Perkuliahan
+- UTS
+- UAS
+- Wisuda
+- Libur Nasional
+- Libur Kampus
+
+---
+
+# 234. Calendar View
+
+Support
+
+```
+Monthly
+
+Weekly
+
+Agenda
+```
+
+---
+
+# 235. Calendar Detail
+
+Klik tanggal
+
+↓
+
+Daftar Agenda
+
+↓
+
+Detail Agenda
+
+---
+
+# 236. Calendar Color
+
+Setiap event memiliki warna berbeda.
+
+Misalnya
+
+```
+UTS
+
+Merah
+
+↓
+
+Wisuda
+
+Hijau
+
+↓
+
+Registrasi
+
+Biru
+```
+
+Seluruh warna berasal dari
+
+```
+AppColors
+```
+
+---
+
+# 237. KRS Module
+
+Menu
+
+```
+Kartu Rencana Studi
+```
+
+---
+
+## Fungsi
+
+Menampilkan
+
+- Semester
+- Mata Kuliah
+- SKS
+- Status
+
+---
+
+# 238. KRS Detail
+
+Informasi
+
+- Nama Mata Kuliah
+- Kode
+- Dosen
+- SKS
+- Jadwal
+- Ruangan
+
+---
+
+# 239. Download KRS
+
+Support
+
+```
+Download PDF
+```
+
+Future
+
+```
+Share PDF
+```
+
+---
+
+# 240. KHS Module
+
+Menu
+
+```
+Kartu Hasil Studi
+```
+
+---
+
+Menampilkan
+
+- Semester
+- IPS
+- Total SKS
+- Daftar Nilai
+
+---
+
+# 241. Grade Module
+
+Halaman
+
+```
+Nilai
+```
+
+---
+
+Menampilkan
+
+- Mata Kuliah
+- Nilai Huruf
+- Nilai Angka
+- SKS
+
+---
+
+# 242. Grade Detail
+
+Informasi
+
+- Kehadiran
+- Tugas
+- Quiz
+- UTS
+- UAS
+- Nilai Akhir
+- Grade
+
+---
+
+# 243. Grade Filter
+
+Support
+
+```
+Semester
+
+↓
+
+Mata Kuliah
+
+↓
+
+Search
+```
+
+---
+
+# 244. GPA Module
+
+Halaman
+
+```
+IP & IPK
+```
+
+---
+
+Menampilkan
+
+- IPS
+- IPK
+- SKS Lulus
+- Total SKS
+
+---
+
+# 245. GPA Chart
+
+Future
+
+Grafik perkembangan
+
+```
+Semester
+
+↓
+
+IPS
+```
+
+Menggunakan reusable chart widget.
+
+---
+
+# 246. Semester History
+
+Menampilkan
+
+```
+Semester 1
+
+↓
+
+Semester 2
+
+↓
+
+Semester 3
+```
+
+hingga semester aktif.
+
+---
+
+# 247. Semester Detail
+
+Klik semester
+
+↓
+
+Menampilkan
+
+- IPS
+- Total SKS
+- Mata Kuliah
+- Nilai
+
+---
+
+# 248. Course Module
+
+Daftar Mata Kuliah.
+
+Informasi
+
+- Nama
+- Kode
+- SKS
+- Semester
+- Dosen
+
+---
+
+# 249. Course Detail
+
+Menampilkan
+
+- Silabus
+- Deskripsi
+- CPL (Future)
+- CPMK (Future)
+
+---
+
+# 250. Search Standard
+
+Semua halaman
+
+menggunakan
+
+```
+AppSearchBar
+```
+
+Debounce
+
+```
+500 ms
+```
+
+---
+
+# 251. Pull To Refresh
+
+Semua halaman
+
+menggunakan
+
+```
+AppRefreshView
+```
+
+---
+
+# 252. Infinite Scroll
+
+Semua halaman list
+
+menggunakan
+
+```
+AppPaginationView
+```
+
+---
+
+# 253. Skeleton Loading
+
+Halaman
+
+```
+Schedule
+
+↓
+
+KRS
+
+↓
+
+Grade
+
+↓
+
+Calendar
+
+↓
+
+Semester
+```
+
+menggunakan
+
+```
+AppSkeleton.list()
+```
+
+---
+
+# 254. Empty State
+
+Jika data kosong
+
+Tampilkan
+
+- Illustration
+- Title
+- Description
+
+Contoh
+
+```
+Belum ada data nilai.
+```
+
+---
+
+# 255. Error State
+
+Jika API gagal
+
+Tampilkan
+
+- Error Animation
+- Retry Button
+
+---
+
+# 256. Download Service
+
+Semua PDF menggunakan
+
+```
+DownloadService
+```
+
+Support
+
+- Progress
+- Cancel
+- Retry
+
+---
+
+# 257. Share Service
+
+Semua dokumen dapat
+
+```
+Share
+```
+
+menggunakan
+
+```
+ShareService
+```
+
+---
+
+# 258. Cache Strategy
+
+Data
+
+- Jadwal
+- Kalender
+- Nilai
+- KRS
+
+disimpan sementara agar tetap dapat dilihat saat offline.
+
+---
+
+# 259. Offline Mode
+
+Jika offline
+
+Menampilkan cache terakhir.
+
+Badge
+
+```
+Offline Mode
+```
+
+---
+
+# 260. Analytics
+
+Future
+
+Backend dapat mengetahui
+
+- Jadwal paling sering dibuka
+- Semester yang sering dilihat
+- Download PDF
+- Share PDF
+
+---
+
+# 261. Accessibility
+
+Support
+
+- Dynamic Font
+- Screen Reader
+- High Contrast
+
+---
+
+# 262. Testing
+
+Minimal
+
+- Bloc Test
+- Widget Test
+- Repository Test
+- Integration Test
+
+---
+
+# 263. Future Enhancement
+
+Sudah dipersiapkan untuk
+
+- Sinkron Google Calendar
+- Sinkron Apple Calendar
+- Reminder Jadwal Kuliah
+- Reminder UTS/UAS
+- Reminder Pengisian KRS
+- Widget Kalender Interaktif
+- AI Ringkasan Nilai
+- Prediksi IPK
+- Progress Kelulusan
+- Progress Mata Kuliah Wajib
+- Rekomendasi Mata Kuliah
+
+---
+
+# 264. API Contract Standard
+
+Seluruh endpoint akademik menggunakan format response yang konsisten.
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": {},
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 100,
+    "hasNext": true
+  }
+}
+```
+
+---
+
+# 265. Penutup Part 06
+
+Modul Akademik Mahasiswa dirancang sebagai inti aplikasi SIMAK Mobile dengan dukungan pagination, pencarian, cache offline, download PDF, share data, serta arsitektur reusable sehingga penambahan fitur baru tidak memerlukan perubahan besar pada struktur aplikasi.
+
+**PART 07** akan membahas **Modul Keuangan dan Tagihan Mahasiswa** secara lengkap, termasuk:
+
+- Daftar Tagihan
+- Detail Tagihan
+- Virtual Account
+- QRIS
+- Transfer Bank
+- E-Wallet (future ready)
+- Riwayat Pembayaran
+- Status Pembayaran Realtime
+- Invoice PDF
+- Bukti Pembayaran
+- Payment Gateway Flow
+- API Contract
+- Dummy Data
+- Full Production Ready Flow

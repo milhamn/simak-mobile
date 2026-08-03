@@ -1,0 +1,1148 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_03.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 03
+>
+> Status : Production Ready
+
+---
+
+# 68. UI/UX Design Standard
+
+Seluruh halaman pada aplikasi harus memiliki tampilan yang konsisten.
+
+Prinsip utama:
+
+- Clean
+- Modern
+- Minimalis
+- Mudah digunakan
+- Konsisten
+- Responsif
+- Accessible
+
+---
+
+# 69. Design System
+
+Seluruh komponen visual berasal dari satu Design System.
+
+```
+Design System
+
+↓
+
+Colors
+
+↓
+
+Typography
+
+↓
+
+Spacing
+
+↓
+
+Radius
+
+↓
+
+Elevation
+
+↓
+
+Shadow
+
+↓
+
+Icons
+
+↓
+
+Buttons
+
+↓
+
+TextField
+
+↓
+
+Card
+
+↓
+
+Dialog
+
+↓
+
+BottomSheet
+
+↓
+
+Animation
+
+```
+
+Tidak boleh membuat style sendiri di setiap halaman.
+
+---
+
+# 70. Theme Manager
+
+Semua pengaturan tema berada pada folder:
+
+```
+core/
+
+theme/
+
+app_theme.dart
+
+app_colors.dart
+
+app_typography.dart
+
+app_spacing.dart
+
+app_radius.dart
+
+app_shadow.dart
+
+app_icon.dart
+
+app_button_theme.dart
+
+app_input_theme.dart
+
+app_card_theme.dart
+
+app_dialog_theme.dart
+
+app_bottomsheet_theme.dart
+
+app_animation.dart
+```
+
+Jika branding universitas berubah maka cukup mengubah file pada folder tersebut.
+
+---
+
+# 71. Color Standard
+
+Kategori warna minimal:
+
+```
+Primary
+
+Primary Light
+
+Primary Dark
+
+Secondary
+
+Background
+
+Surface
+
+Card
+
+Divider
+
+Border
+
+Success
+
+Warning
+
+Error
+
+Info
+
+Text Primary
+
+Text Secondary
+
+Text Hint
+
+Disable
+
+Skeleton Base
+
+Skeleton Highlight
+
+Transparent
+```
+
+Tidak diperbolehkan menggunakan:
+
+```dart
+Colors.blue
+Colors.red
+Colors.green
+```
+
+langsung di Widget.
+
+---
+
+# 72. Typography
+
+Font utama
+
+```
+Plus Jakarta Sans
+```
+
+Fallback
+
+```
+Inter
+
+Roboto
+```
+
+Kategori
+
+```
+Display
+
+Headline
+
+Title
+
+Body
+
+Label
+
+Caption
+```
+
+---
+
+# 73. Font Weight
+
+```
+Light
+
+Regular
+
+Medium
+
+SemiBold
+
+Bold
+
+ExtraBold
+```
+
+Semua berada di Theme.
+
+---
+
+# 74. Radius Standard
+
+```
+XS
+
+SM
+
+MD
+
+LG
+
+XL
+
+FULL
+```
+
+Contoh
+
+Button
+
+```
+Radius MD
+```
+
+Card
+
+```
+Radius LG
+```
+
+Avatar
+
+```
+Radius FULL
+```
+
+---
+
+# 75. Spacing Standard
+
+Gunakan token.
+
+```
+XS
+
+SM
+
+MD
+
+LG
+
+XL
+
+XXL
+```
+
+Jangan menggunakan
+
+```
+EdgeInsets.all(17)
+```
+
+atau angka acak.
+
+---
+
+# 76. Elevation
+
+```
+Level 1
+
+Level 2
+
+Level 3
+
+Level 4
+
+Level 5
+```
+
+---
+
+# 77. Shadow
+
+Semua shadow menggunakan
+
+```
+AppShadow
+```
+
+---
+
+# 78. Icon Standard
+
+Gunakan
+
+```
+Material Symbols Rounded
+```
+
+atau
+
+```
+Cupertino
+```
+
+Jika memerlukan icon khusus
+
+gunakan
+
+```
+flutter_svg
+```
+
+---
+
+# 79. Image Standard
+
+Semua gambar menggunakan
+
+```
+CachedNetworkImage
+```
+
+Tidak menggunakan
+
+```
+Image.network()
+```
+
+langsung.
+
+---
+
+# 80. Responsive Design
+
+Support
+
+- Phone
+- Foldable
+- Tablet
+
+Minimal width
+
+```
+320 px
+```
+
+Maksimal
+
+```
+Tablet
+```
+
+---
+
+# 81. Dark Mode
+
+Aplikasi sudah siap mendukung
+
+```
+Light
+
+Dark
+
+System
+```
+
+Setting disimpan di
+
+```
+Shared Preferences
+```
+
+---
+
+# 82. Reusable Widget Library
+
+Folder
+
+```
+shared/widgets/
+```
+
+Semua widget global berada di sini.
+
+---
+
+# 83. AppScaffold
+
+Semua halaman menggunakan
+
+```
+AppScaffold
+```
+
+Bukan
+
+```
+Scaffold
+```
+
+langsung.
+
+Fitur:
+
+- SafeArea
+- Loading Overlay
+- Keyboard Dismiss
+- Connectivity Listener
+- Background
+- Global Snackbar
+
+---
+
+# 84. AppButton
+
+Jenis
+
+```
+Primary
+
+Secondary
+
+Outline
+
+Ghost
+
+Text
+
+Danger
+
+Success
+
+Loading
+```
+
+Support
+
+- Icon
+- Loading
+- Disable
+- Full Width
+
+---
+
+# 85. AppTextField
+
+Support
+
+- Validation
+- Prefix Icon
+- Suffix Icon
+- Password Toggle
+- Currency
+- Number
+- Search
+- Phone
+- Email
+- Date
+
+---
+
+# 86. AppSearchBar
+
+Default
+
+- Debounce
+- Clear Button
+- Search Icon
+- Voice Search (Future)
+
+---
+
+# 87. AppDropdown
+
+Support
+
+- Search
+- Multi Select
+- Async Data
+
+---
+
+# 88. AppCard
+
+Jenis
+
+```
+Normal
+
+Information
+
+Warning
+
+Success
+
+Statistic
+
+Payment
+
+Menu
+
+```
+
+---
+
+# 89. AppAvatar
+
+Support
+
+- Network
+- Asset
+- Initial Name
+- Camera Overlay
+- Edit Button
+
+---
+
+# 90. AppImage
+
+Support
+
+- Network
+- Asset
+- Placeholder
+- Error Image
+- Loading
+
+---
+
+# 91. AppDialog
+
+Jenis
+
+```
+Alert
+
+Confirmation
+
+Success
+
+Error
+
+Warning
+
+Delete
+
+Information
+```
+
+---
+
+# 92. AppBottomSheet
+
+Support
+
+- Scroll
+- Dynamic Height
+- Search
+- List
+
+---
+
+# 93. AppLoadingOverlay
+
+Global Loading.
+
+Tidak perlu membuat loading di setiap halaman.
+
+Cukup
+
+```
+LoadingService.show()
+
+LoadingService.hide()
+```
+
+---
+
+# 94. AppSnackbar
+
+Jenis
+
+```
+Success
+
+Error
+
+Warning
+
+Info
+```
+
+---
+
+# 95. AppEmptyState
+
+Komponen
+
+- Illustration
+- Title
+- Subtitle
+- Button
+
+Reusable.
+
+---
+
+# 96. AppErrorState
+
+Komponen
+
+- Error Illustration
+- Error Message
+- Retry Button
+
+---
+
+# 97. AppNoInternet
+
+Reusable.
+
+Komponen
+
+- Animation
+- Retry
+
+---
+
+# 98. AppMaintenance
+
+Reusable.
+
+Komponen
+
+- Image
+- Description
+- Contact
+
+---
+
+# 99. AppVersionCard
+
+Menampilkan
+
+- Current Version
+- Latest Version
+- Build Number
+
+---
+
+# 100. AppShimmer
+
+Jenis
+
+```
+Profile
+
+Dashboard
+
+List
+
+Grid
+
+Card
+
+Form
+
+Table
+
+Menu
+
+Banner
+
+Notification
+
+```
+
+Semua menggunakan widget yang sama.
+
+---
+
+# 101. Skeleton Factory
+
+Contoh
+
+```
+AppSkeleton.list()
+
+AppSkeleton.dashboard()
+
+AppSkeleton.profile()
+
+AppSkeleton.grid()
+
+AppSkeleton.form()
+
+AppSkeleton.table()
+```
+
+Developer tinggal memilih jenis skeleton.
+
+---
+
+# 102. AppPaginationView
+
+Widget reusable untuk semua halaman list.
+
+Sudah memiliki
+
+- Search
+- Pagination
+- Infinite Scroll
+- Refresh
+- Empty State
+- Error State
+- Skeleton
+- Retry
+- Back To Top
+
+Developer cukup memberikan:
+
+- Item Builder
+- Load Function
+- Search Function
+
+---
+
+# 103. AppBackToTop
+
+Reusable Floating Button.
+
+Muncul ketika scroll lebih dari 500 px.
+
+Animasi muncul dan menghilang secara otomatis.
+
+---
+
+# 104. AppRefreshView
+
+Wrapper untuk
+
+```
+RefreshIndicator
+```
+
+Digunakan oleh semua halaman.
+
+---
+
+# 105. AppGridMenu
+
+Digunakan pada dashboard.
+
+Support
+
+- Icon
+- Badge
+- Notification Count
+
+---
+
+# 106. AppStatisticCard
+
+Digunakan untuk
+
+- IPK
+- IPS
+- SKS
+- Tagihan
+- Jumlah Mahasiswa
+
+---
+
+# 107. AppInfoCard
+
+Untuk
+
+- Informasi
+- Pengumuman
+- Reminder
+
+---
+
+# 108. AppSectionHeader
+
+Komponen
+
+- Judul
+- Subtitle
+- Tombol Lihat Semua
+
+---
+
+# 109. AppProfileHeader
+
+Digunakan di halaman profil.
+
+Support
+
+- Foto
+- Nama
+- Role
+- Program Studi / Fakultas
+- Tombol Edit
+
+---
+
+# 110. AppTimeline
+
+Digunakan untuk
+
+- Riwayat Pembayaran
+- Riwayat Cuti
+- Riwayat Semester
+
+---
+
+# 111. AppBadge
+
+Support
+
+- Success
+- Warning
+- Error
+- Info
+
+---
+
+# 112. Reusable Service
+
+Folder
+
+```
+core/services/
+```
+
+---
+
+# 113. Navigation Service
+
+Tidak perlu BuildContext.
+
+Contoh
+
+```
+NavigationService.push()
+
+NavigationService.pop()
+
+NavigationService.replace()
+
+NavigationService.clearStack()
+```
+
+---
+
+# 114. Dialog Service
+
+```
+DialogService.showSuccess()
+
+DialogService.showError()
+
+DialogService.showConfirm()
+```
+
+---
+
+# 115. Snackbar Service
+
+```
+SnackbarService.success()
+
+SnackbarService.error()
+
+SnackbarService.warning()
+
+SnackbarService.info()
+```
+
+---
+
+# 116. Loading Service
+
+```
+LoadingService.show()
+
+LoadingService.hide()
+```
+
+---
+
+# 117. Share Service
+
+```
+ShareService.shareApp()
+
+ShareService.shareText()
+
+ShareService.shareFile()
+```
+
+---
+
+# 118. Url Launcher Service
+
+```
+Open Website
+
+Open Email
+
+Open Phone
+
+Open WhatsApp
+
+Open Google Maps
+```
+
+---
+
+# 119. Permission Service
+
+Mengelola
+
+- Camera
+- Storage
+- Notification
+- Location
+
+---
+
+# 120. Image Picker Service
+
+Support
+
+- Camera
+- Gallery
+- Crop
+- Compress
+
+---
+
+# 121. File Picker Service
+
+Support
+
+- PDF
+- DOCX
+- XLSX
+- JPG
+- PNG
+
+---
+
+# 122. Download Service
+
+Support
+
+- Download PDF
+- Download Image
+- Download Excel
+
+---
+
+# 123. Validator Library
+
+Reusable validator.
+
+```
+Required
+
+Email
+
+Phone
+
+Password
+
+NIM
+
+NIDN
+
+Number
+
+Min Length
+
+Max Length
+```
+
+---
+
+# 124. Formatter Library
+
+```
+Date
+
+Time
+
+Currency
+
+Percentage
+
+Semester
+
+GPA
+
+Credit
+
+```
+
+---
+
+# 125. Extension Library
+
+```
+String Extension
+
+Date Extension
+
+Number Extension
+
+Context Extension
+
+Widget Extension
+```
+
+---
+
+# 126. Logging Helper
+
+```
+AppLogger.info()
+
+AppLogger.error()
+
+AppLogger.warning()
+
+AppLogger.debug()
+```
+
+---
+
+# 127. Constants
+
+Semua constant berada di
+
+```
+core/constants/
+```
+
+Contoh
+
+- API Path
+- Route Name
+- App Config
+- Language Code
+- Payment Type
+
+---
+
+# 128. Asset Management
+
+Folder
+
+```
+assets/
+
+images/
+
+icons/
+
+animations/
+
+translations/
+
+dummy/
+
+fonts/
+
+```
+
+---
+
+# 129. Lottie Standard
+
+Digunakan untuk
+
+- Splash
+- Success
+- Empty
+- Error
+- No Internet
+- Maintenance
+- Loading
+
+---
+
+# 130. Penutup Part 03
+
+Pada bagian ini telah ditetapkan standar UI/UX dan komponen reusable yang akan digunakan di seluruh aplikasi sehingga tampilan tetap konsisten, mudah dirawat, dan mudah dikembangkan.
+
+**PART 04** akan membahas implementasi **Authentication**, **Portal**, **Login Mahasiswa**, **Login Dosen**, **Forgot Password**, **Change Password**, **Profile**, **Edit Profile**, **Ganti Foto Profil**, **Multi Language**, **Version Check Flow**, dan seluruh alur autentikasi hingga masuk ke Dashboard.

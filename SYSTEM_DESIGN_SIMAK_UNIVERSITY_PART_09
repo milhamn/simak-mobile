@@ -1,0 +1,836 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_08.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 08
+>
+> Module : Lecturer (Dosen)
+>
+> Status : Production Ready
+>
+> Architecture : Clean Architecture + BLoC + Repository Pattern
+
+---
+
+# 340. Lecturer Module Overview
+
+Modul Dosen merupakan aplikasi akademik untuk seluruh aktivitas dosen.
+
+Semua data berasal dari backend.
+
+Frontend hanya bertugas menampilkan data dan mengirim request.
+
+Seluruh halaman wajib menggunakan:
+
+- Infinite Scroll
+- Search
+- Pull To Refresh
+- Skeleton Loading
+- Empty State
+- Error State
+- Retry
+- Reusable Widget
+- BLoC
+- Clean Architecture
+
+---
+
+# 341. Folder Structure
+
+```
+features/
+
+lecturer/
+
+dashboard/
+
+teaching_schedule/
+
+course/
+
+class/
+
+student/
+
+attendance/
+
+grade/
+
+announcement/
+
+profile/
+
+```
+
+Setiap module memiliki
+
+```
+data/
+
+domain/
+
+presentation/
+```
+
+---
+
+# 342. Login Dosen
+
+Login menggunakan
+
+- NIDN
+- NIP
+- Username
+- Email
+
+ditentukan backend.
+
+---
+
+# 343. Dashboard Dosen
+
+Dashboard menampilkan informasi penting.
+
+Minimal terdiri dari
+
+- Jadwal Mengajar Hari Ini
+- Jumlah Mata Kuliah
+- Jumlah Kelas
+- Jumlah Mahasiswa
+- Kelas Berikutnya
+- Pengumuman
+- Kalender Akademik
+- Quick Menu
+
+---
+
+# 344. Dashboard API
+
+```
+GET
+
+/dashboard/lecturer
+```
+
+Response
+
+- Profile
+- Summary
+- Today Schedule
+- Announcement
+- Calendar
+- Notification
+
+---
+
+# 345. Dashboard Summary Card
+
+Menampilkan
+
+- Mata Kuliah Aktif
+- Total Kelas
+- Total Mahasiswa
+- Pertemuan Minggu Ini
+
+Menggunakan
+
+```
+AppStatisticCard
+```
+
+---
+
+# 346. Quick Menu
+
+Minimal
+
+```
+Jadwal Mengajar
+
+↓
+
+Daftar Mata Kuliah
+
+↓
+
+Absensi
+
+↓
+
+Input Nilai
+
+↓
+
+Pengumuman
+
+↓
+
+Kalender
+
+↓
+
+Profile
+```
+
+Backend dapat mengubah urutan menu.
+
+---
+
+# 347. Jadwal Mengajar
+
+Halaman utama dosen.
+
+Support
+
+- Search
+- Filter
+- Infinite Scroll
+- Refresh
+- Skeleton
+
+---
+
+# 348. Jadwal Mengajar Card
+
+Menampilkan
+
+- Mata Kuliah
+- Kode
+- SKS
+- Hari
+- Jam
+- Gedung
+- Ruangan
+- Semester
+- Status
+
+---
+
+# 349. Filter Jadwal
+
+Support
+
+- Semester
+- Hari
+- Mata Kuliah
+- Tahun Akademik
+
+---
+
+# 350. Detail Jadwal
+
+Menampilkan
+
+- Mata Kuliah
+- Kelas
+- Ruangan
+- Gedung
+- Hari
+- Jam
+- SKS
+- Semester
+- Tahun Akademik
+
+Button
+
+```
+Lihat Mahasiswa
+
+↓
+
+Absensi
+
+↓
+
+Input Nilai
+```
+
+---
+
+# 351. Mata Kuliah
+
+Daftar seluruh mata kuliah yang diampu.
+
+Support
+
+- Search
+- Pagination
+- Refresh
+
+---
+
+# 352. Detail Mata Kuliah
+
+Menampilkan
+
+- Nama
+- Kode
+- Semester
+- SKS
+- Fakultas
+- Program Studi
+- Jumlah Mahasiswa
+
+---
+
+# 353. Daftar Kelas
+
+Satu mata kuliah dapat memiliki beberapa kelas.
+
+Contoh
+
+```
+Pemrograman A
+
+↓
+
+Pemrograman B
+
+↓
+
+Pemrograman C
+```
+
+---
+
+# 354. Detail Kelas
+
+Menampilkan
+
+- Nama Kelas
+- Jumlah Mahasiswa
+- Jadwal
+- Dosen
+- Ruangan
+
+---
+
+# 355. Daftar Mahasiswa
+
+Support
+
+- Search
+- Infinite Scroll
+- Pull Refresh
+- Skeleton
+- Pagination
+
+---
+
+# 356. Student Card
+
+Menampilkan
+
+- Foto
+- Nama
+- NIM
+- Program Studi
+- Status
+
+---
+
+# 357. Student Detail
+
+Menampilkan
+
+- Biodata
+- Kehadiran
+- Nilai
+- Kontak
+
+Jika backend mengizinkan.
+
+---
+
+# 358. Attendance Module
+
+Menu
+
+```
+Input Absensi
+```
+
+---
+
+# 359. Attendance Type
+
+Support
+
+```
+Hadir
+
+Izin
+
+Sakit
+
+Alpha
+
+Terlambat
+```
+
+Backend bebas menambah status baru.
+
+---
+
+# 360. Attendance Page
+
+Menampilkan daftar mahasiswa.
+
+Setiap mahasiswa memiliki
+
+Dropdown Status.
+
+---
+
+# 361. Bulk Attendance
+
+Support
+
+```
+Hadir Semua
+
+↓
+
+Kosongkan Semua
+```
+
+Menggunakan dialog konfirmasi.
+
+---
+
+# 362. Attendance Search
+
+Mencari berdasarkan
+
+- Nama
+- NIM
+
+---
+
+# 363. Attendance Filter
+
+Support
+
+- Pertemuan
+- Kelas
+
+---
+
+# 364. Attendance Save
+
+Frontend mengirim seluruh data sekaligus.
+
+```
+POST
+
+/attendance/save
+```
+
+---
+
+# 365. Attendance Draft
+
+Jika internet terputus.
+
+Absensi disimpan sebagai draft lokal.
+
+Saat internet kembali.
+
+Frontend menawarkan sinkronisasi.
+
+---
+
+# 366. Offline Attendance
+
+Future Ready.
+
+Support
+
+```
+Offline Attendance
+
+↓
+
+Sync Later
+```
+
+---
+
+# 367. Grade Module
+
+Menu
+
+```
+Input Nilai
+```
+
+---
+
+# 368. Grade Components
+
+Minimal
+
+- Kehadiran
+- Tugas
+- Quiz
+- Praktikum
+- UTS
+- UAS
+- Nilai Akhir
+
+Backend menentukan komponen.
+
+Frontend membaca konfigurasi.
+
+---
+
+# 369. Grade Configuration API
+
+```
+GET
+
+/course/{id}/grading-component
+```
+
+Contoh Response
+
+```json
+{
+  "components":[
+    {
+      "id":"attendance",
+      "name":"Kehadiran",
+      "weight":10
+    },
+    {
+      "id":"assignment",
+      "name":"Tugas",
+      "weight":20
+    },
+    {
+      "id":"quiz",
+      "name":"Quiz",
+      "weight":10
+    },
+    {
+      "id":"midterm",
+      "name":"UTS",
+      "weight":30
+    },
+    {
+      "id":"final",
+      "name":"UAS",
+      "weight":30
+    }
+  ]
+}
+```
+
+Frontend tidak hardcode komponen.
+
+---
+
+# 370. Input Nilai
+
+Support
+
+- Manual Input
+- Copy Paste
+- Import Excel (Future)
+
+---
+
+# 371. Validation Nilai
+
+Backend mengirim.
+
+Contoh
+
+```
+Min
+
+0
+
+Max
+
+100
+```
+
+Frontend mengikuti.
+
+---
+
+# 372. Save Draft Nilai
+
+Dosen dapat
+
+```
+Save Draft
+```
+
+belum dipublish.
+
+---
+
+# 373. Publish Nilai
+
+Flow
+
+```
+Draft
+
+↓
+
+Review
+
+↓
+
+Publish
+
+↓
+
+Confirmation
+
+↓
+
+Backend
+```
+
+Setelah publish.
+
+Nilai tidak dapat diubah kecuali backend mengizinkan.
+
+---
+
+# 374. Grade History
+
+Semua perubahan nilai dicatat backend.
+
+Frontend hanya menampilkan.
+
+---
+
+# 375. Rekap Nilai
+
+Menampilkan
+
+- Rata-rata
+- Nilai Tertinggi
+- Nilai Terendah
+- Distribusi Nilai
+
+Future menggunakan chart.
+
+---
+
+# 376. Rekap Kehadiran
+
+Menampilkan
+
+- Persentase Hadir
+- Izin
+- Sakit
+- Alpha
+
+---
+
+# 377. Announcement Module
+
+Dosen dapat melihat
+
+- Pengumuman Fakultas
+- Pengumuman Universitas
+- Pengumuman Program Studi
+
+Future
+
+Dosen dapat membuat pengumuman.
+
+---
+
+# 378. Notification
+
+Kategori
+
+- Akademik
+- Sistem
+- Jadwal
+- Penilaian
+
+---
+
+# 379. Lecturer Calendar
+
+Menampilkan
+
+- Jadwal Mengajar
+- UTS
+- UAS
+- Libur
+- Seminar
+
+---
+
+# 380. Profile
+
+Menu
+
+- Profil
+- Ubah Password
+- Bahasa
+- Share App
+- Contact Us
+- Logout
+
+Menggunakan komponen profile yang sama dengan mahasiswa.
+
+---
+
+# 381. Search Standard
+
+Semua halaman menggunakan
+
+```
+AppSearchBar
+```
+
+Debounce
+
+```
+500 ms
+```
+
+---
+
+# 382. Infinite Scroll Standard
+
+Semua list menggunakan
+
+```
+AppPaginationView
+```
+
+---
+
+# 383. Skeleton Loading
+
+Menggunakan
+
+```
+AppSkeleton.list()
+
+AppSkeleton.table()
+
+AppSkeleton.profile()
+```
+
+---
+
+# 384. Empty State
+
+Jika data kosong.
+
+Contoh
+
+```
+Belum ada jadwal mengajar.
+```
+
+---
+
+# 385. Error State
+
+Jika API gagal.
+
+Tampilkan
+
+- Illustration
+- Error Message
+- Retry Button
+
+---
+
+# 386. Lecturer API Standard
+
+Semua endpoint mendukung
+
+- page
+- limit
+- search
+- sort
+- filter
+
+Response
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": [],
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 100,
+    "hasNext": true
+  }
+}
+```
+
+---
+
+# 387. Lecturer Security
+
+Frontend tidak boleh menentukan
+
+- Hak akses
+- Mata kuliah yang diampu
+- Kelas yang dapat diakses
+- Mahasiswa yang dapat dilihat
+
+Semua berdasarkan token dari backend.
+
+---
+
+# 388. Future Ready Features
+
+Sudah dipersiapkan untuk
+
+- Scan QR Kehadiran
+- NFC Attendance
+- Face Recognition Attendance
+- Upload Materi Kuliah
+- Upload Tugas
+- Penilaian Rubrik
+- Penilaian Berbasis CPMK
+- Chat Mahasiswa
+- Live Class
+- Zoom Integration
+- Google Meet Integration
+- Microsoft Teams Integration
+- AI Assistant Dosen
+- Rekap Beban Mengajar
+- Jadwal Sidang
+- Bimbingan Skripsi
+- Persetujuan KRS
+- Persetujuan Cuti
+- Approval Surat Akademik
+
+---
+
+# 389. Performance Rules
+
+- Semua list menggunakan lazy loading.
+- Semua widget menggunakan `const` jika memungkinkan.
+- Hindari rebuild yang tidak perlu.
+- Gunakan BlocSelector untuk update parsial.
+- Gunakan repository cache untuk data yang jarang berubah.
+
+---
+
+# 390. Penutup Part 08
+
+Modul Dosen dirancang menggunakan pendekatan **Backend Driven**, **Reusable Component**, dan **Clean Architecture**, sehingga mudah dikembangkan untuk kebutuhan akademik universitas skala besar.
+
+**PART 09** akan membahas **Notification Center, CMS (Backend Driven UI), Dynamic Dashboard, Dynamic Menu, Feature Flag, Remote Configuration, Banner Management, dan Announcement System**, sehingga sebagian besar tampilan aplikasi dapat dikontrol langsung dari backend tanpa perlu melakukan update aplikasi.

@@ -1,0 +1,628 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_07.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 07
+>
+> Module : Finance, Billing & Payment
+>
+> Status : Production Ready
+
+---
+
+# 266. Finance Module Overview
+
+Modul Keuangan digunakan untuk seluruh transaksi pembayaran mahasiswa.
+
+Frontend **tidak menyimpan daftar metode pembayaran secara hardcode**.
+
+Seluruh metode pembayaran diambil dari backend melalui API sehingga jika universitas menambah, menghapus, atau menonaktifkan metode pembayaran, aplikasi tidak perlu di-update.
+
+---
+
+# 267. Folder Structure
+
+```
+features/
+
+billing/
+
+payment/
+
+payment_method/
+
+invoice/
+
+payment_history/
+```
+
+---
+
+# 268. Flow Pembayaran
+
+```
+Dashboard
+
+↓
+
+Tagihan
+
+↓
+
+Detail Tagihan
+
+↓
+
+Klik Bayar
+
+↓
+
+Load Payment Method API
+
+↓
+
+Pilih Metode Pembayaran
+
+↓
+
+Generate Payment
+
+↓
+
+Halaman Pembayaran
+
+↓
+
+Menunggu Pembayaran
+
+↓
+
+Status Berhasil
+
+↓
+
+Riwayat Pembayaran
+```
+
+---
+
+# 269. Billing List
+
+Halaman Tagihan.
+
+Support
+
+- Search
+- Pull To Refresh
+- Infinite Scroll
+- Pagination
+- Skeleton Loading
+- Empty State
+- Error State
+- Retry
+- Back To Top
+
+---
+
+# 270. Billing Card
+
+Menampilkan
+
+- Nama Tagihan
+- Semester
+- Tahun Akademik
+- Nominal
+- Jatuh Tempo
+- Status
+
+---
+
+# 271. Billing Detail
+
+Berisi
+
+- Nomor Invoice
+- Nama Tagihan
+- Semester
+- Tahun Akademik
+- Nominal
+- Potongan
+- Denda
+- Total Bayar
+- Jatuh Tempo
+- Status
+
+Button
+
+```
+Bayar Sekarang
+```
+
+---
+
+# 272. Payment Method API
+
+Saat tombol **Bayar Sekarang** ditekan, frontend memanggil API.
+
+```
+GET
+
+/payment-methods?billingId={billingId}
+```
+
+Backend menentukan metode apa saja yang tersedia.
+
+Frontend tidak melakukan filtering sendiri.
+
+---
+
+# 273. Contoh Response Payment Method
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "VA_BCA",
+      "name": "BCA Virtual Account",
+      "type": "VA",
+      "icon": "https://...",
+      "description": "Transfer melalui Virtual Account BCA",
+      "isActive": true,
+      "fee": 4000,
+      "minimumAmount": 10000,
+      "maximumAmount": 100000000
+    },
+    {
+      "id": "VA_BNI",
+      "name": "BNI Virtual Account",
+      "type": "VA",
+      "icon": "...",
+      "isActive": true
+    },
+    {
+      "id": "QRIS",
+      "name": "QRIS",
+      "type": "QRIS",
+      "icon": "...",
+      "isActive": true
+    },
+    {
+      "id": "TRANSFER",
+      "name": "Transfer Bank",
+      "type": "BANK_TRANSFER",
+      "icon": "...",
+      "isActive": true
+    }
+  ]
+}
+```
+
+---
+
+# 274. Frontend Rule
+
+Frontend hanya menampilkan metode pembayaran yang dikirim API.
+
+Tidak boleh membuat list seperti
+
+```dart
+[
+BCA,
+BNI,
+BRI
+]
+```
+
+secara hardcode.
+
+---
+
+# 275. Payment Method Card
+
+Setiap item menampilkan
+
+- Logo
+- Nama Metode
+- Deskripsi
+- Biaya Admin
+- Status
+
+Jika metode sedang maintenance
+
+Backend mengirim
+
+```
+isActive = false
+```
+
+Frontend otomatis disable.
+
+---
+
+# 276. Future Ready
+
+Backend bebas menambahkan metode baru tanpa update aplikasi.
+
+Contoh
+
+```
+QRIS
+
+↓
+
+BCA VA
+
+↓
+
+BNI VA
+
+↓
+
+BRI VA
+
+↓
+
+Mandiri VA
+
+↓
+
+Permata VA
+
+↓
+
+CIMB VA
+
+↓
+
+BSI VA
+
+↓
+
+GoPay
+
+↓
+
+OVO
+
+↓
+
+DANA
+
+↓
+
+ShopeePay
+
+↓
+
+LinkAja
+
+↓
+
+Kartu Kredit
+
+↓
+
+Debit Online
+
+↓
+
+Alfamart
+
+↓
+
+Indomaret
+
+↓
+
+Pos Indonesia
+```
+
+Frontend otomatis menampilkan selama API mengirim data.
+
+---
+
+# 277. Payment Method Group
+
+Backend boleh mengelompokkan metode.
+
+Contoh
+
+```
+Virtual Account
+
+- BCA
+
+- BNI
+
+- BRI
+
+QRIS
+
+Transfer Bank
+
+E-Wallet
+
+Retail Outlet
+```
+
+Frontend menampilkan berdasarkan group tersebut.
+
+---
+
+# 278. Generate Payment API
+
+Setelah user memilih metode pembayaran
+
+```
+POST
+
+/payment/create
+```
+
+Request
+
+```json
+{
+  "billingId": "123",
+  "paymentMethodId": "VA_BCA"
+}
+```
+
+---
+
+# 279. Generate Payment Response
+
+Backend mengembalikan data sesuai metode.
+
+Contoh VA
+
+```json
+{
+  "paymentId": "PAY001",
+  "paymentType": "VA",
+  "virtualAccount": "1234567890",
+  "expiredAt": "...",
+  "amount": 2500000
+}
+```
+
+Contoh QRIS
+
+```json
+{
+  "paymentId": "PAY001",
+  "paymentType": "QRIS",
+  "qrImage": "...",
+  "expiredAt": "...",
+  "amount": 2500000
+}
+```
+
+---
+
+# 280. Payment Screen Factory
+
+Frontend tidak membuat halaman pembayaran berbeda-beda.
+
+Gunakan
+
+```
+PaymentPageFactory
+```
+
+Flow
+
+```
+paymentType
+
+↓
+
+VA Page
+
+↓
+
+QRIS Page
+
+↓
+
+Transfer Page
+
+↓
+
+EWallet Page
+```
+
+Sehingga mudah ditambah.
+
+---
+
+# 281. Virtual Account Page
+
+Menampilkan
+
+- Nama Bank
+- Logo
+- Nomor VA
+- Nominal
+- Expired Time
+- Copy VA
+- Copy Nominal
+- Petunjuk Pembayaran
+
+---
+
+# 282. QRIS Page
+
+Menampilkan
+
+- QR Image
+- Nominal
+- Countdown
+- Download QR
+- Share QR
+- Refresh Status
+
+---
+
+# 283. Transfer Bank Page
+
+Menampilkan
+
+- Nama Bank
+- Nomor Rekening
+- Nama Pemilik
+- Nominal
+- Berita Transfer (opsional)
+- Copy Rekening
+
+---
+
+# 284. Payment Status API
+
+```
+GET
+
+/payment/status/{paymentId}
+```
+
+Response
+
+```json
+{
+  "status": "PAID"
+}
+```
+
+---
+
+# 285. Status Polling
+
+Jika pembayaran belum selesai
+
+Frontend melakukan polling.
+
+Default
+
+```
+10 detik
+```
+
+Backend dapat mengubah interval.
+
+---
+
+# 286. Payment Status
+
+Status yang didukung
+
+```
+CREATED
+
+WAITING
+
+PENDING
+
+PROCESS
+
+PAID
+
+FAILED
+
+EXPIRED
+
+CANCELLED
+
+REFUND
+```
+
+---
+
+# 287. Payment History
+
+Menu
+
+```
+Riwayat Pembayaran
+```
+
+Support
+
+- Search
+- Filter
+- Infinite Scroll
+- Pull Refresh
+- Download Invoice
+- Share Invoice
+
+---
+
+# 288. Payment History Card
+
+Menampilkan
+
+- Invoice
+- Nama Tagihan
+- Metode Pembayaran
+- Nominal
+- Tanggal
+- Status
+
+---
+
+# 289. Download Invoice
+
+Invoice berasal dari backend.
+
+Frontend hanya
+
+- Preview
+- Download
+- Share
+
+---
+
+# 290. Frontend Responsibility
+
+Frontend hanya bertugas:
+
+- Menampilkan daftar tagihan
+- Menampilkan daftar metode pembayaran dari API
+- Memilih metode
+- Generate pembayaran
+- Menampilkan instruksi
+- Mengecek status
+- Menampilkan hasil
+
+Frontend **tidak menghitung**:
+
+- Biaya admin
+- Denda
+- Diskon
+- Total pembayaran
+- Nomor VA
+- QRIS
+
+Semuanya berasal dari backend.
+
+---
+
+# 291. Production Ready Rule
+
+Agar mudah dikembangkan, backend menjadi sumber utama (single source of truth) untuk:
+
+- Daftar metode pembayaran
+- Urutan metode pembayaran
+- Logo metode pembayaran
+- Deskripsi
+- Biaya admin
+- Status aktif/nonaktif
+- Group metode
+- Instruksi pembayaran
+- Nominal pembayaran
+- Expired time
+- Payment gateway yang digunakan
+
+Dengan pendekatan ini, ketika universitas mengganti payment gateway atau menambahkan metode pembayaran baru, aplikasi mobile tidak memerlukan perubahan kode, selama kontrak API tetap konsisten.

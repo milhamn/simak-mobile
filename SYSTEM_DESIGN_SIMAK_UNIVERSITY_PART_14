@@ -1,0 +1,789 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_14.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 14
+>
+> Module : Database Design (PostgreSQL)
+>
+> Database : PostgreSQL 16+
+>
+> ORM : Spring Data JPA + Hibernate
+>
+> Migration : Flyway
+>
+> Backend : Java 17 + Spring Boot 3.x
+>
+> Status : Production Ready
+
+---
+
+# 744. Database Design Principle
+
+Seluruh database harus memenuhi prinsip berikut.
+
+- Third Normal Form (3NF)
+- Mudah dikembangkan
+- Mendukung Multi Kampus
+- Mendukung Multi Fakultas
+- Mendukung Multi Program Studi
+- Soft Delete
+- Audit Trail
+- UUID Ready
+- High Performance
+- Scalable
+
+---
+
+# 745. Standard Column
+
+Seluruh tabel wajib memiliki field berikut.
+
+```sql
+id
+
+uuid
+
+created_at
+
+created_by
+
+updated_at
+
+updated_by
+
+deleted_at
+
+deleted_by
+
+is_deleted
+
+version
+```
+
+---
+
+# 746. Primary Key
+
+Gunakan
+
+```
+BIGSERIAL
+```
+
+untuk Primary Key internal.
+
+Gunakan
+
+```
+UUID
+```
+
+untuk komunikasi dengan frontend jika diperlukan.
+
+---
+
+# 747. Audit Trail
+
+Semua perubahan data wajib tercatat.
+
+```text
+created_at
+
+created_by
+
+updated_at
+
+updated_by
+
+deleted_at
+
+deleted_by
+```
+
+---
+
+# 748. Authentication Module
+
+Tabel.
+
+```
+users
+
+roles
+
+permissions
+
+role_permissions
+
+user_roles
+
+refresh_tokens
+
+devices
+
+login_history
+
+audit_logs
+```
+
+---
+
+# 749. Master Data Module
+
+```
+campuses
+
+faculties
+
+study_programs
+
+academic_years
+
+semesters
+
+courses
+
+course_classes
+
+class_rooms
+
+buildings
+
+lecturers
+
+students
+```
+
+---
+
+# 750. Student Module
+
+```
+student_profiles
+
+student_guardians
+
+student_addresses
+
+student_documents
+
+student_status_history
+```
+
+---
+
+# 751. Lecturer Module
+
+```
+lecturer_profiles
+
+lecturer_positions
+
+lecturer_departments
+```
+
+---
+
+# 752. Academic Module
+
+```
+course_schedules
+
+krs
+
+krs_details
+
+khs
+
+grades
+
+grade_components
+
+attendance_meetings
+
+attendance_students
+
+academic_calendar
+```
+
+---
+
+# 753. Billing Module
+
+```
+billings
+
+billing_details
+
+payment_transactions
+
+payment_methods
+
+payment_callbacks
+
+payment_histories
+
+payment_receipts
+```
+
+---
+
+# 754. CMS Module
+
+```
+cms_banners
+
+cms_dashboard_menu
+
+cms_dashboard_layout
+
+cms_news
+
+cms_announcements
+
+cms_pages
+
+cms_faq
+
+cms_contact
+```
+
+---
+
+# 755. Notification Module
+
+```
+notifications
+
+notification_reads
+
+notification_templates
+
+push_logs
+```
+
+---
+
+# 756. Configuration Module
+
+```
+feature_flags
+
+remote_configs
+
+application_settings
+
+attributes
+```
+
+---
+
+# 757. OneSignal Module
+
+```
+devices
+```
+
+Minimal field.
+
+```
+player_id
+
+device_id
+
+platform
+
+language
+
+app_version
+
+last_login
+```
+
+---
+
+# 758. Logging Module
+
+```
+api_logs
+
+error_logs
+
+audit_logs
+
+activity_logs
+```
+
+---
+
+# 759. Student Table
+
+Kolom utama.
+
+```
+student_number
+
+full_name
+
+email
+
+phone
+
+faculty_id
+
+study_program_id
+
+current_semester
+
+status
+```
+
+---
+
+# 760. Lecturer Table
+
+Kolom utama.
+
+```
+nidn
+
+employee_number
+
+full_name
+
+email
+
+phone
+
+faculty_id
+
+status
+```
+
+---
+
+# 761. Course Table
+
+Kolom.
+
+```
+course_code
+
+course_name
+
+credits
+
+semester
+
+course_type
+
+active
+```
+
+---
+
+# 762. Schedule Table
+
+Kolom.
+
+```
+course_id
+
+lecturer_id
+
+class_id
+
+room_id
+
+day
+
+start_time
+
+end_time
+
+semester_id
+```
+
+---
+
+# 763. Attendance Table
+
+Kolom.
+
+```
+meeting
+
+student_id
+
+schedule_id
+
+attendance_status
+
+attendance_time
+```
+
+---
+
+# 764. Grade Table
+
+Kolom.
+
+```
+student_id
+
+course_id
+
+attendance_score
+
+assignment_score
+
+quiz_score
+
+mid_exam
+
+final_exam
+
+final_score
+
+grade
+
+grade_point
+```
+
+---
+
+# 765. Billing Table
+
+Kolom.
+
+```
+invoice_number
+
+student_id
+
+semester_id
+
+amount
+
+paid_amount
+
+remaining_amount
+
+status
+
+due_date
+```
+
+---
+
+# 766. Payment Table
+
+Kolom.
+
+```
+payment_number
+
+gateway
+
+payment_method
+
+transaction_id
+
+status
+
+fee
+
+expired_at
+```
+
+---
+
+# 767. Notification Table
+
+Kolom.
+
+```
+title
+
+message
+
+type
+
+target_role
+
+target_user
+
+image
+
+action_type
+
+action_value
+```
+
+---
+
+# 768. Banner Table
+
+Kolom.
+
+```
+title
+
+image
+
+start_date
+
+end_date
+
+active
+
+sort_order
+
+action_type
+
+action_value
+```
+
+---
+
+# 769. Feature Flag Table
+
+Kolom.
+
+```
+feature_key
+
+feature_name
+
+active
+
+minimum_version
+```
+
+---
+
+# 770. Remote Config Table
+
+Kolom.
+
+```
+config_key
+
+config_value
+
+description
+```
+
+---
+
+# 771. Attribute Table
+
+Digunakan untuk konfigurasi dinamis.
+
+Kolom.
+
+```
+type
+
+code
+
+name
+
+string_value
+
+number_value
+
+boolean_value
+
+priority
+
+status
+```
+
+Contoh.
+
+```
+PAYMENT
+
+PAYMENT_TIMEOUT
+
+30
+```
+
+---
+
+# 772. Soft Delete Rule
+
+Semua tabel menggunakan.
+
+```
+is_deleted
+
+deleted_at
+
+deleted_by
+```
+
+Data tidak dihapus permanen.
+
+---
+
+# 773. Index Strategy
+
+Minimal index.
+
+```
+student_number
+
+nidn
+
+email
+
+invoice_number
+
+payment_number
+
+course_code
+
+created_at
+```
+
+---
+
+# 774. Foreign Key Rule
+
+Seluruh relasi menggunakan Foreign Key.
+
+Tidak diperbolehkan menyimpan relasi tanpa constraint kecuali ada alasan performa yang jelas.
+
+---
+
+# 775. UUID Strategy
+
+UUID digunakan untuk.
+
+- Mobile API
+- Public URL
+- File Sharing
+
+Primary Key internal tetap BIGSERIAL.
+
+---
+
+# 776. Flyway Structure
+
+```
+V1__create_auth_tables.sql
+
+V2__create_master_tables.sql
+
+V3__create_student_tables.sql
+
+V4__create_lecturer_tables.sql
+
+V5__create_academic_tables.sql
+
+V6__create_payment_tables.sql
+
+V7__create_notification_tables.sql
+
+V8__create_cms_tables.sql
+
+V9__create_configuration_tables.sql
+```
+
+---
+
+# 777. Naming Convention
+
+Tabel.
+
+```
+snake_case
+```
+
+Kolom.
+
+```
+snake_case
+```
+
+Constraint.
+
+```
+pk_
+
+fk_
+
+idx_
+
+uk_
+```
+
+---
+
+# 778. Performance Guideline
+
+- Hindari SELECT *
+- Gunakan pagination
+- Gunakan index yang tepat
+- Gunakan batch insert untuk data besar
+- Hindari N+1 Query
+- Gunakan Lazy Loading secara bijak
+- Gunakan JOIN hanya saat diperlukan
+
+---
+
+# 779. Future Ready
+
+Database dirancang agar mendukung.
+
+- Multi Kampus
+- Multi Tenant (opsional)
+- MBKM
+- E-Learning
+- Digital Library
+- Smart Parking
+- Smart Card
+- AI Assistant
+- Campus Marketplace
+- Alumni Portal
+
+Tanpa perubahan struktur besar.
+
+---
+
+# 780. Penutup Part 14
+
+Dokumen ini menjadi standar desain database PostgreSQL untuk SIMAK Universitas. Seluruh tabel, relasi, indeks, audit trail, serta strategi migrasi mengikuti praktik terbaik agar backend Spring Boot 3 + Java 17 tetap mudah dipelihara, aman, dan siap menangani pertumbuhan data dalam jangka panjang.
+
+---
+
+# NEXT PART
+
+**SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_15.md**
+
+Materi yang akan dibahas:
+
+- ERD Lengkap (100+ tabel)
+- Relasi antar tabel
+- Cardinality
+- Sequence Diagram
+- Activity Diagram
+- Authentication Flow Diagram
+- Payment Flow Diagram
+- Attendance Flow Diagram
+- KRS Flow Diagram
+- Grade Flow Diagram
+- Deployment Architecture
+- Docker Architecture
+- CI/CD Pipeline
+- Monitoring & Logging
+- Backup Strategy
+- Disaster Recovery
+- Security Hardening
+- Performance Optimization
+- Production Deployment Checklist

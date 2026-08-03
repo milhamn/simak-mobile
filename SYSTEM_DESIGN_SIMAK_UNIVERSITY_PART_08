@@ -1,0 +1,697 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_07_PAYMENT_APPENDIX.md
+
+> Version : 1.0.0
+>
+> Module : Payment Appendix
+>
+> Status : Production Ready
+>
+> Objective : Backend Driven Payment System
+
+---
+
+# Payment Design Principle
+
+## Backend Driven Payment
+
+Seluruh proses pembayaran harus bersifat **Backend Driven**.
+
+Frontend **tidak boleh** melakukan hardcode terhadap:
+
+- Daftar metode pembayaran
+- Logo bank
+- Nomor rekening
+- Nomor Virtual Account
+- QRIS
+- Nominal pembayaran
+- Biaya admin
+- Denda
+- Promo
+- Diskon
+- Urutan payment
+- Badge payment
+- Instruksi pembayaran
+- Status payment
+
+Backend menjadi **Single Source of Truth (SSOT)**.
+
+---
+
+# 311. Payment Configuration API
+
+Sebelum membuka halaman pembayaran, aplikasi mengambil konfigurasi.
+
+```
+GET
+
+/payment/config
+```
+
+Contoh Response
+
+```json
+{
+    "currency":"IDR",
+    "currencySymbol":"Rp",
+    "decimalDigit":0,
+    "minimumPayment":10000,
+    "maximumPayment":50000000,
+    "paymentExpiredMinute":60,
+    "pollingInterval":10,
+    "allowPartialPayment":false,
+    "allowInstallment":false,
+    "allowMultipleInvoice":true
+}
+```
+
+Frontend hanya membaca konfigurasi.
+
+---
+
+# 312. Payment Method API
+
+Saat user memilih **Bayar Sekarang**
+
+```
+GET
+
+/payment-methods?billingId={billingId}
+```
+
+Contoh Response
+
+```json
+{
+    "success":true,
+    "data":[
+        {
+            "id":"QRIS",
+            "name":"QRIS",
+            "group":"QRIS",
+            "type":"QRIS",
+            "iconUrl":"",
+            "sort":1,
+            "isActive":true,
+            "badge":"Recommended",
+            "adminFee":0,
+            "description":"Bayar menggunakan QRIS"
+        },
+        {
+            "id":"VA_BCA",
+            "name":"BCA Virtual Account",
+            "group":"Virtual Account",
+            "type":"VA",
+            "iconUrl":"",
+            "sort":2,
+            "isActive":true,
+            "badge":"Popular",
+            "adminFee":4000
+        }
+    ]
+}
+```
+
+---
+
+# 313. Payment Method Group
+
+Backend dapat mengelompokkan metode pembayaran.
+
+Contoh
+
+```
+Virtual Account
+
+QRIS
+
+Transfer Bank
+
+E-Wallet
+
+Retail Outlet
+
+Credit Card
+
+Debit Online
+```
+
+Frontend hanya melakukan grouping berdasarkan field API.
+
+---
+
+# 314. Payment Method Ordering
+
+Frontend tidak menentukan urutan.
+
+Backend mengirim
+
+```
+sort
+```
+
+Frontend cukup melakukan
+
+```
+sort ascending
+```
+
+---
+
+# 315. Payment Badge
+
+Backend dapat mengirim badge.
+
+Contoh
+
+```
+Recommended
+
+Popular
+
+Promo
+
+New
+
+Free Admin Fee
+
+Limited
+
+Maintenance
+```
+
+Frontend hanya menampilkan.
+
+---
+
+# 316. Payment Promotion
+
+Backend dapat mengirim informasi promo.
+
+Contoh
+
+```json
+{
+    "promoTitle":"Gratis Biaya Admin",
+    "promoDescription":"Berlaku hingga 31 Desember"
+}
+```
+
+Jika tidak ada promo
+
+```
+promoTitle = null
+```
+
+---
+
+# 317. Payment Maintenance
+
+Jika payment sedang maintenance.
+
+Backend
+
+```json
+{
+    "isActive":false,
+    "maintenanceMessage":"Sedang maintenance"
+}
+```
+
+Frontend
+
+- Disable Card
+- Tampilkan pesan maintenance
+
+---
+
+# 318. Payment Icon
+
+Logo payment berasal dari backend.
+
+```
+iconUrl
+```
+
+Tidak boleh disimpan pada assets aplikasi.
+
+Hal ini memungkinkan perubahan logo tanpa update aplikasi.
+
+---
+
+# 319. Generate Payment API
+
+```
+POST
+
+/payment/create
+```
+
+Request
+
+```json
+{
+    "billingId":"INV001",
+    "paymentMethodId":"VA_BCA"
+}
+```
+
+---
+
+# 320. Generate Payment Response
+
+Contoh Virtual Account
+
+```json
+{
+    "paymentId":"PAY001",
+    "paymentType":"VA",
+    "virtualAccount":"1234567890",
+    "amount":2500000,
+    "expiredAt":"2026-07-27T12:00:00Z"
+}
+```
+
+Contoh QRIS
+
+```json
+{
+    "paymentId":"PAY002",
+    "paymentType":"QRIS",
+    "qrImage":"https://...",
+    "amount":2500000,
+    "expiredAt":"2026-07-27T12:00:00Z"
+}
+```
+
+---
+
+# 321. Payment Page Factory
+
+Gunakan Factory Pattern.
+
+```
+paymentType
+
+↓
+
+VirtualAccountPage
+
+↓
+
+QRISPage
+
+↓
+
+TransferPage
+
+↓
+
+EWalletPage
+
+↓
+
+WebViewPage
+```
+
+Penambahan metode baru tidak mengubah halaman lama.
+
+---
+
+# 322. Payment Instruction API
+
+Instruksi pembayaran berasal dari backend.
+
+```
+GET
+
+/payment/{paymentId}/instruction
+```
+
+Response
+
+```json
+{
+    "title":"Cara Pembayaran",
+    "steps":[
+        "Login ke Mobile Banking",
+        "Pilih Virtual Account",
+        "Masukkan Nomor VA",
+        "Konfirmasi Pembayaran"
+    ]
+}
+```
+
+Frontend cukup membuat ListView.
+
+---
+
+# 323. Payment Status API
+
+```
+GET
+
+/payment/status/{paymentId}
+```
+
+Response
+
+```json
+{
+    "paymentId":"PAY001",
+    "status":"PAID"
+}
+```
+
+---
+
+# 324. Polling Configuration
+
+Frontend tidak menentukan interval polling.
+
+Menggunakan konfigurasi dari
+
+```
+payment/config
+```
+
+Misal
+
+```
+10 detik
+
+15 detik
+
+30 detik
+```
+
+---
+
+# 325. Payment Status
+
+Status yang harus didukung.
+
+```
+CREATED
+
+WAITING
+
+PENDING
+
+PROCESS
+
+PAID
+
+FAILED
+
+EXPIRED
+
+CANCELLED
+
+REFUND
+
+PARTIAL_PAID
+```
+
+---
+
+# 326. Payment Receipt API
+
+```
+GET
+
+/payment/{paymentId}/receipt
+```
+
+Response
+
+```json
+{
+    "invoiceNumber":"INV001",
+    "receiptNumber":"RCT001",
+    "pdfUrl":"https://..."
+}
+```
+
+---
+
+# 327. Invoice Preview
+
+Frontend mendukung
+
+- Preview PDF
+- Download PDF
+- Share PDF
+
+Semua file berasal dari backend.
+
+---
+
+# 328. Deep Link Payment
+
+Future Ready.
+
+Backend dapat mengirim.
+
+```json
+{
+    "deeplink":"gopay://...",
+    "fallbackUrl":"https://..."
+}
+```
+
+Frontend membuka aplikasi pembayaran jika tersedia.
+
+---
+
+# 329. WebView Payment
+
+Jika gateway membutuhkan redirect.
+
+Backend
+
+```json
+{
+    "paymentType":"WEBVIEW",
+    "url":"https://payment.example.com"
+}
+```
+
+Frontend membuka reusable WebView.
+
+---
+
+# 330. Pending Payment Recovery
+
+Jika aplikasi ditutup.
+
+Saat aplikasi dibuka.
+
+Flow
+
+```
+Splash
+
+↓
+
+Check Pending Payment
+
+↓
+
+Pending ?
+
+↓
+
+YES
+
+↓
+
+Open Waiting Payment Page
+```
+
+User dapat melanjutkan pembayaran.
+
+---
+
+# 331. Pending Payment Cache
+
+Disimpan pada Secure Storage.
+
+```
+paymentId
+
+billingId
+
+paymentType
+
+expiredAt
+```
+
+---
+
+# 332. Payment Notification
+
+Kategori OneSignal
+
+```
+Finance
+```
+
+Jenis
+
+- Tagihan Baru
+- Pembayaran Berhasil
+- Pembayaran Gagal
+- Pembayaran Kadaluarsa
+- Reminder Jatuh Tempo
+- Refund Berhasil
+
+---
+
+# 333. Payment Status Update
+
+Status pembayaran dapat diperbarui melalui.
+
+- Polling API
+- Push Notification (OneSignal)
+- Firebase Messaging (Future)
+- WebSocket (Future)
+- Server Sent Event (Future)
+
+---
+
+# 334. Multiple Outstanding Bills
+
+Backend dapat mengirim beberapa jenis tagihan.
+
+Contoh
+
+```
+UKT
+
+Praktikum
+
+Laboratorium
+
+Perpustakaan
+
+Seminar
+
+Wisuda
+
+Asrama
+```
+
+Frontend hanya menampilkan list.
+
+---
+
+# 335. Billing Item Detail
+
+Satu tagihan dapat memiliki banyak item.
+
+Contoh
+
+```
+UKT Semester Genap
+
+Rp4.000.000
+
+Praktikum
+
+Rp500.000
+
+Laboratorium
+
+Rp300.000
+
+Denda
+
+Rp50.000
+```
+
+Frontend menggunakan reusable expandable list.
+
+---
+
+# 336. Scholarship Support
+
+Backend dapat mengirim.
+
+```json
+{
+    "scholarshipAmount":1500000,
+    "scholarshipName":"Beasiswa Prestasi"
+}
+```
+
+Frontend hanya menampilkan.
+
+---
+
+# 337. Installment Support
+
+Future Ready.
+
+Backend
+
+```json
+{
+    "allowInstallment":true,
+    "minimumInstallment":2,
+    "maximumInstallment":8
+}
+```
+
+Frontend otomatis menampilkan pilihan cicilan.
+
+---
+
+# 338. Payment Security Rules
+
+Frontend **DILARANG** menghitung:
+
+- Nominal
+- Total Bayar
+- Biaya Admin
+- Denda
+- Diskon
+- Pajak
+- Cashback
+- Promo
+- Nomor VA
+- QRIS
+- Invoice Number
+
+Seluruh data tersebut hanya berasal dari backend.
+
+---
+
+# 339. Production Ready Principles
+
+Seluruh konfigurasi pembayaran harus berasal dari backend, termasuk:
+
+- Daftar metode pembayaran
+- Urutan metode
+- Group metode
+- Logo
+- Badge
+- Promo
+- Status aktif
+- Pesan maintenance
+- Nominal
+- Denda
+- Diskon
+- Biaya admin
+- Countdown
+- Instruksi pembayaran
+- Deep Link
+- URL WebView
+- Invoice PDF
+- Receipt PDF
+- Polling interval
+- Konfigurasi cicilan
+- Konfigurasi beasiswa
+- Konfigurasi pembayaran sebagian (Partial Payment)
+- Payment Gateway yang digunakan
+
+Dengan pendekatan ini aplikasi Flutter tetap stabil walaupun universitas berpindah dari Midtrans ke Xendit, DOKU, Faspay, Nicepay, iPaymu, atau payment gateway internal tanpa perlu melakukan perubahan pada aplikasi mobile selama kontrak API tetap konsisten.

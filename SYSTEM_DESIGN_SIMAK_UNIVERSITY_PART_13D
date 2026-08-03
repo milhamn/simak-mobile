@@ -1,0 +1,798 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_13D.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 13D
+>
+> Module : Notification, CMS, Remote Config, Feature Flag & Dynamic UI API
+>
+> Backend : Java 17 + Spring Boot 3.x
+>
+> Flutter : Clean Architecture + BLoC
+>
+> Status : Production Ready
+
+---
+
+# 701. Overview
+
+Seluruh tampilan aplikasi harus dikendalikan oleh backend semaksimal mungkin.
+
+Frontend hanya bertugas menampilkan data.
+
+Dengan konsep ini:
+
+- Tidak perlu update aplikasi untuk mengubah banner
+- Tidak perlu update aplikasi untuk mengubah menu
+- Tidak perlu update aplikasi untuk mengubah dashboard
+- Dapat mengaktifkan/menonaktifkan fitur dari backend
+- Dapat melakukan A/B Testing
+- Dapat melakukan rollout fitur bertahap
+
+---
+
+# 702. CMS Architecture
+
+```
+CMS Admin
+
+↓
+
+Backend API
+
+↓
+
+Flutter
+
+↓
+
+Render Dynamic UI
+```
+
+---
+
+# 703. Notification List
+
+```
+GET
+
+/notifications
+```
+
+Support.
+
+```
+page
+
+limit
+
+search
+
+type
+
+status
+```
+
+---
+
+# 704. Notification Response
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 100,
+      "title": "Pembayaran Berhasil",
+      "message": "Tagihan Semester Ganjil telah berhasil dibayar.",
+      "type": "PAYMENT",
+      "isRead": false,
+      "createdAt": "2026-07-26T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+# 705. Notification Type
+
+```
+GENERAL
+
+ACADEMIC
+
+PAYMENT
+
+SYSTEM
+
+ANNOUNCEMENT
+
+GRADE
+
+ATTENDANCE
+
+BILLING
+
+PROMOTION
+```
+
+---
+
+# 706. Notification Detail
+
+```
+GET
+
+/notifications/{id}
+```
+
+---
+
+# 707. Read Notification
+
+```
+PUT
+
+/notifications/{id}/read
+```
+
+---
+
+# 708. Read All Notification
+
+```
+PUT
+
+/notifications/read-all
+```
+
+---
+
+# 709. Delete Notification
+
+```
+DELETE
+
+/notifications/{id}
+```
+
+---
+
+# 710. Notification Badge
+
+```
+GET
+
+/notifications/unread-count
+```
+
+Response.
+
+```json
+{
+  "success": true,
+  "data": {
+    "count": 7
+  }
+}
+```
+
+---
+
+# 711. OneSignal Registration
+
+Setelah login.
+
+```
+POST
+
+/device/register
+```
+
+Body.
+
+```json
+{
+  "playerId":"ONESIGNAL_PLAYER_ID",
+  "deviceId":"DEVICE001",
+  "platform":"ANDROID"
+}
+```
+
+---
+
+# 712. Push Notification Flow
+
+```
+Backend
+
+↓
+
+OneSignal
+
+↓
+
+Device
+
+↓
+
+Open App
+
+↓
+
+Notification Detail
+```
+
+---
+
+# 713. Announcement
+
+```
+GET
+
+/announcements
+```
+
+Support.
+
+- Pagination
+- Search
+- Category
+
+---
+
+# 714. Announcement Detail
+
+```
+GET
+
+/announcements/{id}
+```
+
+---
+
+# 715. Banner API
+
+```
+GET
+
+/cms/banner
+```
+
+Query.
+
+```
+page=HOME
+```
+
+---
+
+# 716. Banner Response
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id":1,
+      "title":"PMB 2027",
+      "image":"https://...",
+      "actionType":"WEBVIEW",
+      "actionValue":"https://kampus.ac.id/pmb"
+    }
+  ]
+}
+```
+
+---
+
+# 717. Banner Action Type
+
+```
+NONE
+
+WEBVIEW
+
+EXTERNAL_BROWSER
+
+INTERNAL_PAGE
+
+ARTICLE
+
+YOUTUBE
+
+PDF
+
+CUSTOM_ROUTE
+```
+
+---
+
+# 718. Dashboard Menu API
+
+```
+GET
+
+/cms/dashboard-menu
+```
+
+Backend menentukan menu.
+
+Response.
+
+```json
+[
+  {
+    "code":"SCHEDULE",
+    "title":"Jadwal",
+    "icon":"https://...",
+    "route":"schedule",
+    "active":true,
+    "sort":1
+  }
+]
+```
+
+---
+
+# 719. Dashboard Layout API
+
+```
+GET
+
+/cms/dashboard-layout
+```
+
+Backend menentukan urutan widget.
+
+Contoh.
+
+```
+Banner
+
+↓
+
+Summary
+
+↓
+
+Quick Menu
+
+↓
+
+Today's Schedule
+
+↓
+
+Billing
+
+↓
+
+Announcement
+```
+
+---
+
+# 720. Feature Flag
+
+```
+GET
+
+/feature-flags
+```
+
+---
+
+# 721. Feature Flag Response
+
+```json
+{
+  "attendance": true,
+  "billing": true,
+  "survey": false,
+  "chat": false,
+  "internship": true,
+  "graduation": true
+}
+```
+
+Frontend menyembunyikan fitur yang bernilai `false`.
+
+---
+
+# 722. Remote Config
+
+```
+GET
+
+/remote-config
+```
+
+---
+
+# 723. Remote Config Response
+
+```json
+{
+  "dashboardRefreshInterval":300,
+  "notificationRefreshInterval":60,
+  "cacheDuration":900,
+  "maintenanceCheckInterval":300,
+  "minimumSearchLength":2
+}
+```
+
+---
+
+# 724. FAQ
+
+```
+GET
+
+/faq
+```
+
+Support.
+
+- Pagination
+- Search
+
+---
+
+# 725. FAQ Detail
+
+```
+GET
+
+/faq/{id}
+```
+
+---
+
+# 726. Contact Us
+
+```
+GET
+
+/contact-us
+```
+
+Response.
+
+```json
+{
+  "email":"support@kampus.ac.id",
+  "phone":"+622112345678",
+  "whatsapp":"+628123456789",
+  "website":"https://kampus.ac.id",
+  "instagram":"https://...",
+  "youtube":"https://..."
+}
+```
+
+---
+
+# 727. News API
+
+```
+GET
+
+/news
+```
+
+Support.
+
+- Search
+- Category
+- Pagination
+
+---
+
+# 728. News Detail
+
+```
+GET
+
+/news/{id}
+```
+
+---
+
+# 729. Survey List
+
+```
+GET
+
+/surveys
+```
+
+Mahasiswa hanya melihat survei yang aktif.
+
+---
+
+# 730. Survey Detail
+
+```
+GET
+
+/surveys/{id}
+```
+
+---
+
+# 731. Submit Survey
+
+```
+POST
+
+/surveys/{id}/submit
+```
+
+---
+
+# 732. Settings API
+
+```
+GET
+
+/settings
+```
+
+Berisi.
+
+- Bahasa
+- Tema
+- Versi
+- Build Number
+- Privacy Policy
+- Terms
+- About
+
+---
+
+# 733. Privacy Policy
+
+```
+GET
+
+/privacy-policy
+```
+
+---
+
+# 734. Terms & Conditions
+
+```
+GET
+
+/terms
+```
+
+---
+
+# 735. About Application
+
+```
+GET
+
+/about
+```
+
+---
+
+# 736. Dynamic Menu Rule
+
+Semua menu berasal dari backend.
+
+Backend dapat menentukan.
+
+- Icon
+- Urutan
+- Aktif / Tidak Aktif
+- Badge
+- Warna
+- Route
+- Permission
+
+Frontend tidak boleh hardcode.
+
+---
+
+# 737. Dashboard Widget Rule
+
+Semua widget dashboard berasal dari backend.
+
+Contoh.
+
+```
+Summary
+
+↓
+
+Banner
+
+↓
+
+Quick Menu
+
+↓
+
+Today's Schedule
+
+↓
+
+Announcement
+
+↓
+
+Billing
+
+↓
+
+Survey
+```
+
+---
+
+# 738. CMS Caching
+
+Cache.
+
+```
+Banner
+
+30 menit
+
+Dashboard Menu
+
+60 menit
+
+Remote Config
+
+30 menit
+
+Feature Flag
+
+10 menit
+```
+
+---
+
+# 739. Background Refresh
+
+Saat aplikasi aktif.
+
+Lakukan refresh.
+
+- Notification Badge
+- Feature Flag
+- Remote Config
+- Dashboard
+
+sesuai interval dari backend.
+
+---
+
+# 740. Security Rules
+
+Frontend tidak boleh menentukan.
+
+- Permission
+- Feature
+- Dashboard Widget
+- Banner
+- Menu
+- Survey
+- Announcement
+
+Semua berasal dari backend.
+
+---
+
+# 741. Production Checklist
+
+✔ Notification Center
+
+✔ Push Notification
+
+✔ OneSignal
+
+✔ CMS Banner
+
+✔ Dynamic Dashboard
+
+✔ Dynamic Menu
+
+✔ Remote Config
+
+✔ Feature Flag
+
+✔ FAQ
+
+✔ Contact Us
+
+✔ News
+
+✔ Survey
+
+✔ Privacy Policy
+
+✔ Terms
+
+✔ About
+
+✔ Settings
+
+---
+
+# 742. Future Ready
+
+Arsitektur ini siap dikembangkan untuk.
+
+- Live Chat
+- AI Chatbot
+- Digital Student Card
+- E-Library
+- Alumni
+- Career Center
+- Internship
+- MBKM
+- E-Voting
+- Event Registration
+- Seminar
+- Webinar
+- E-Certificate
+- Marketplace Kampus
+- Campus Maps
+- Smart Parking
+- Smart Locker
+- Smart Canteen
+- Campus Shuttle
+- Visitor Management
+
+Tanpa perubahan besar pada arsitektur.
+
+---
+
+# 743. Penutup Part 13D
+
+Dengan pendekatan **Backend Driven UI**, aplikasi dapat berkembang tanpa harus sering merilis versi baru ke Play Store maupun App Store. Sebagian besar perubahan tampilan, menu, banner, dan pengaturan cukup dilakukan melalui backend.
+
+---
+
+# NEXT PART
+
+**SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_14.md**
+
+Akan membahas **Database Design (PostgreSQL)** secara lengkap, meliputi:
+
+- ERD Production Ready
+- Master Tables
+- Authentication Tables
+- Student Tables
+- Lecturer Tables
+- Academic Tables
+- KRS
+- KHS
+- Nilai
+- Jadwal
+- Absensi
+- Tagihan
+- Pembayaran
+- CMS
+- Notification
+- Audit Log
+- Refresh Token
+- OneSignal Device
+- Remote Config
+- Feature Flag
+- Attribute Table
+- Standard Columns
+- Index Strategy
+- Foreign Key
+- UUID Strategy
+- Soft Delete Strategy
+- Flyway Migration Structure

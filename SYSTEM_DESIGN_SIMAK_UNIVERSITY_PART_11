@@ -1,0 +1,1025 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_11.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 11
+>
+> Module : Flutter Coding Standard, Folder Structure, Clean Architecture & Best Practice
+>
+> Status : Production Ready
+>
+> Flutter : Stable
+>
+> Dart : Stable
+
+---
+
+# 481. Development Principle
+
+Seluruh source code harus mengikuti prinsip berikut.
+
+- Clean Architecture
+- SOLID Principle
+- DRY (Don't Repeat Yourself)
+- KISS (Keep It Simple)
+- Separation of Concern
+- Reusable First
+- Testable
+- Scalable
+- Maintainable
+- Readable
+
+---
+
+# 482. State Management
+
+State Management menggunakan.
+
+```
+flutter_bloc
+```
+
+Tidak menggunakan
+
+```
+setState()
+```
+
+untuk Business Logic.
+
+setState hanya diperbolehkan untuk kebutuhan UI lokal yang sangat sederhana, misalnya animasi atau perubahan tampilan sesaat.
+
+---
+
+# 483. Navigation
+
+Menggunakan
+
+```
+GoRouter
+```
+
+Semua route didefinisikan dalam satu tempat.
+
+```
+core/router/
+```
+
+Tidak boleh menggunakan Navigator.push() secara langsung.
+
+---
+
+# 484. Dependency Injection
+
+Menggunakan
+
+```
+GetIt
+
+Injectable
+```
+
+Seluruh service di-register pada
+
+```
+core/di/
+```
+
+---
+
+# 485. Network Layer
+
+Menggunakan
+
+```
+Dio
+```
+
+Dengan
+
+- Auth Interceptor
+- Refresh Token Interceptor
+- Logger
+- Retry Interceptor
+- Error Interceptor
+
+---
+
+# 486. Local Storage
+
+Gunakan.
+
+```
+Flutter Secure Storage
+```
+
+untuk
+
+- Token
+- Refresh Token
+- Session
+
+Gunakan.
+
+```
+Hive
+```
+
+atau
+
+```
+Isar
+```
+
+untuk cache.
+
+---
+
+# 487. Environment
+
+Gunakan
+
+```
+flutter_dotenv
+```
+
+Contoh
+
+```
+.env.dev
+
+.env.staging
+
+.env.prod
+```
+
+Tidak boleh hardcode.
+
+- Base URL
+- OneSignal App Id
+- Timeout
+- Build Mode
+
+---
+
+# 488. Localization
+
+Gunakan
+
+```
+easy_localization
+```
+
+Support
+
+```
+Indonesia
+
+English
+```
+
+Semua text berasal dari file localization.
+
+Tidak boleh hardcode string.
+
+---
+
+# 489. Theme Management
+
+Gunakan
+
+```
+AppTheme
+```
+
+Seluruh warna berasal dari
+
+```
+theme/
+
+↓
+
+app_colors.dart
+
+↓
+
+app_theme.dart
+```
+
+Tidak boleh.
+
+```dart
+Colors.blue
+```
+
+langsung di widget.
+
+---
+
+# 490. Typography
+
+Gunakan
+
+```
+Google Font
+
+Inter
+```
+
+Sebagai font utama.
+
+Alternatif
+
+```
+Plus Jakarta Sans
+```
+
+Seluruh ukuran font berada pada.
+
+```
+AppTextStyle
+```
+
+---
+
+# 491. Spacing
+
+Gunakan.
+
+```
+AppSpacing
+```
+
+Contoh.
+
+```
+4
+
+8
+
+12
+
+16
+
+20
+
+24
+
+32
+
+40
+```
+
+Tidak menggunakan angka acak.
+
+---
+
+# 492. Border Radius
+
+Gunakan.
+
+```
+AppRadius
+```
+
+Contoh.
+
+```
+8
+
+12
+
+16
+
+20
+
+24
+```
+
+---
+
+# 493. Icon
+
+Gunakan
+
+```
+Material Symbols
+```
+
+Jika membutuhkan icon tambahan gunakan
+
+```
+FontAwesome
+```
+
+---
+
+# 494. Folder Structure
+
+```
+lib/
+
+core/
+
+config/
+
+constant/
+
+di/
+
+env/
+
+router/
+
+network/
+
+theme/
+
+utils/
+
+extensions/
+
+services/
+
+shared/
+
+widgets/
+
+features/
+
+authentication/
+
+dashboard/
+
+schedule/
+
+grade/
+
+attendance/
+
+billing/
+
+notification/
+
+profile/
+
+settings/
+
+main.dart
+```
+
+---
+
+# 495. Feature Structure
+
+Setiap feature wajib memiliki.
+
+```
+data/
+
+domain/
+
+presentation/
+```
+
+---
+
+# 496. Data Layer
+
+Berisi.
+
+```
+Datasource
+
+Repository Impl
+
+DTO
+
+Mapper
+
+Model
+```
+
+---
+
+# 497. Domain Layer
+
+Berisi.
+
+```
+Repository
+
+Entity
+
+UseCase
+```
+
+---
+
+# 498. Presentation Layer
+
+Berisi.
+
+```
+Bloc
+
+Page
+
+Widget
+```
+
+---
+
+# 499. Bloc Rule
+
+Satu Bloc hanya menangani.
+
+```
+Satu Responsibility
+```
+
+Contoh.
+
+```
+LoginBloc
+
+ProfileBloc
+
+ScheduleBloc
+```
+
+---
+
+# 500. Event Naming
+
+Gunakan.
+
+```
+LoadProfileEvent
+
+RefreshProfileEvent
+
+SearchScheduleEvent
+```
+
+---
+
+# 501. State Naming
+
+Gunakan.
+
+```
+Initial
+
+Loading
+
+Loaded
+
+Empty
+
+Error
+```
+
+---
+
+# 502. Repository Rule
+
+Repository tidak boleh mengetahui Widget.
+
+Repository hanya mengembalikan data.
+
+---
+
+# 503. Use Case Rule
+
+Setiap proses bisnis menggunakan UseCase.
+
+Contoh.
+
+```
+LoginUseCase
+
+GetProfileUseCase
+
+GetScheduleUseCase
+```
+
+---
+
+# 504. Widget Rule
+
+Widget maksimal sekitar **300 baris**.
+
+Jika lebih.
+
+Pisahkan menjadi widget kecil.
+
+---
+
+# 505. Reusable Widget
+
+Seluruh komponen umum wajib reusable.
+
+Minimal.
+
+```
+AppButton
+
+AppTextField
+
+AppSearchBar
+
+AppDropdown
+
+AppCard
+
+AppDialog
+
+AppBottomSheet
+
+AppLoading
+
+AppShimmer
+
+AppEmpty
+
+AppError
+
+AppImage
+
+AppAvatar
+
+AppScaffold
+
+AppAppBar
+
+AppPaginationView
+
+BackToTopButton
+
+NetworkImageWidget
+```
+
+---
+
+# 506. Reusable Dialog
+
+Minimal tersedia.
+
+```
+Loading
+
+Success
+
+Warning
+
+Error
+
+Confirmation
+```
+
+---
+
+# 507. Reusable Bottom Sheet
+
+Gunakan.
+
+```
+AppBottomSheet
+```
+
+Untuk.
+
+- Filter
+- Sort
+- Picker
+
+---
+
+# 508. Reusable Loading
+
+Gunakan.
+
+```
+AppLoading
+```
+
+Support.
+
+- Fullscreen
+- Dialog
+- Inline
+
+---
+
+# 509. Skeleton Loading
+
+Gunakan.
+
+```
+AppSkeleton
+```
+
+Support.
+
+```
+List
+
+Grid
+
+Card
+
+Table
+
+Profile
+
+Dashboard
+```
+
+---
+
+# 510. Infinite Scroll
+
+Gunakan reusable.
+
+```
+AppPaginationView<T>
+```
+
+Support.
+
+- Pull Refresh
+- Search
+- Empty
+- Error
+- Retry
+- Back To Top
+
+---
+
+# 511. Search Standard
+
+Gunakan.
+
+```
+AppSearchBar
+```
+
+Dengan debounce
+
+```
+500 ms
+```
+
+---
+
+# 512. Empty State
+
+Gunakan.
+
+```
+AppEmptyWidget
+```
+
+Support.
+
+- Icon
+- Image
+- Title
+- Description
+- Action Button
+
+---
+
+# 513. Error State
+
+Gunakan.
+
+```
+AppErrorWidget
+```
+
+Support.
+
+- Retry
+- Contact Support
+
+---
+
+# 514. Image Loading
+
+Gunakan.
+
+```
+CachedNetworkImage
+```
+
+Support.
+
+- Placeholder
+- Error Widget
+- Cache
+
+---
+
+# 515. Logger
+
+Gunakan logger terpusat.
+
+```
+AppLogger
+```
+
+Tidak menggunakan
+
+```
+print()
+```
+
+di production.
+
+---
+
+# 516. Extension
+
+Semua extension berada pada.
+
+```
+core/extensions/
+```
+
+Contoh.
+
+```
+Date Extension
+
+Currency Extension
+
+String Extension
+
+Context Extension
+```
+
+---
+
+# 517. Utility
+
+Semua helper.
+
+```
+Formatter
+
+Validator
+
+Permission
+
+Launcher
+
+Connectivity
+
+File
+
+Clipboard
+```
+
+berada pada.
+
+```
+core/utils/
+```
+
+---
+
+# 518. Connectivity
+
+Gunakan.
+
+```
+connectivity_plus
+```
+
+Jika offline.
+
+Arahkan ke halaman.
+
+```
+No Internet
+```
+
+---
+
+# 519. Version Checker
+
+Saat Splash Screen.
+
+Flow.
+
+```
+Load Config
+
+↓
+
+Check Version
+
+↓
+
+Maintenance?
+
+↓
+
+Force Update?
+
+↓
+
+Login
+```
+
+---
+
+# 520. Route Guard
+
+GoRouter wajib memiliki.
+
+- Auth Guard
+- Guest Guard
+- Permission Guard
+
+---
+
+# 521. Performance Rule
+
+- Gunakan `const` jika memungkinkan.
+- Hindari rebuild berlebihan.
+- Gunakan `BlocSelector` atau `buildWhen`.
+- Hindari nested widget yang terlalu dalam.
+- Lazy load seluruh list.
+
+---
+
+# 522. Asset Management
+
+```
+assets/
+
+images/
+
+icons/
+
+animations/
+
+lottie/
+
+translations/
+
+dummy/
+
+fonts/
+```
+
+---
+
+# 523. Dummy Data
+
+Seluruh Dummy JSON berada pada.
+
+```
+assets/dummy/
+```
+
+Saat backend selesai.
+
+Cukup mengganti.
+
+```
+Dummy Repository
+
+↓
+
+API Repository
+```
+
+UI tidak berubah.
+
+---
+
+# 524. Lint Rules
+
+Gunakan.
+
+```
+flutter_lints
+```
+
+Tambahkan aturan.
+
+- Hindari dynamic jika tidak diperlukan.
+- Hindari var jika tipe sudah jelas.
+- Gunakan final sebisa mungkin.
+- Gunakan const constructor.
+
+---
+
+# 525. Naming Convention
+
+Class.
+
+```
+PascalCase
+```
+
+Method.
+
+```
+camelCase
+```
+
+File.
+
+```
+snake_case.dart
+```
+
+Constant.
+
+```
+UPPER_CASE
+```
+
+---
+
+# 526. Production Rules
+
+Tidak boleh hardcode.
+
+- Warna
+- Font
+- URL
+- API Endpoint
+- String
+- Role
+- Permission
+- Menu
+- Banner
+- Feature Flag
+- Payment Method
+
+Semua berasal dari konfigurasi atau backend.
+
+---
+
+# 527. Testing Strategy
+
+Minimal.
+
+- Unit Test
+- Widget Test
+- Integration Test
+
+Gunakan dependency injection agar mudah di-mock.
+
+---
+
+# 528. Code Review Checklist
+
+Sebelum merge.
+
+- Tidak ada hardcode.
+- Tidak ada print().
+- Tidak ada business logic di UI.
+- Semua text localization.
+- Semua warna dari Theme.
+- Semua API melalui Repository.
+- Semua route melalui GoRouter.
+- Semua loading menggunakan reusable widget.
+- Semua list mendukung pagination jika datanya banyak.
+
+---
+
+# 529. AI Coding Rules
+
+Jika menggunakan AI untuk generate code.
+
+AI wajib mengikuti.
+
+- Folder Structure
+- Naming Convention
+- Clean Architecture
+- BLoC Pattern
+- Reusable Widget
+- Reusable Function
+- Theme System
+- Localization
+- GoRouter
+- Repository Pattern
+
+AI tidak boleh membuat struktur baru yang berbeda.
+
+---
+
+# 530. Penutup Part 11
+
+Dokumen ini menjadi standar resmi pengembangan Flutter SIMAK Universitas. Seluruh developer maupun AI generator wajib mengikuti aturan ini agar kode tetap konsisten, mudah dipelihara, reusable, dan siap dikembangkan dalam jangka panjang.
+
+**PART 12** akan membahas **Dummy Data, Mock API, Repository Dummy, Offline Cache Strategy, dan Migration Strategy dari Dummy ke Backend API** sehingga seluruh UI dapat dibangun dan diuji sebelum backend selesai.

@@ -1,0 +1,780 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_13A.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 13A
+>
+> Module : Authentication, Splash, Version, Maintenance & Profile API
+>
+> Backend : Java 17 + Spring Boot 3.x
+>
+> Database : PostgreSQL 16+
+>
+> Status : Production Ready
+
+---
+
+# 575. Overview
+
+Dokumen ini mendefinisikan kontrak API antara aplikasi Flutter dan Backend.
+
+Semua endpoint menggunakan format response yang sama.
+
+```json
+{
+  "success": true,
+  "message": "",
+  "data": {},
+  "meta": null,
+  "errors": []
+}
+```
+
+---
+
+# 576. Authentication Flow
+
+```
+Splash Screen
+
+↓
+
+Get App Config
+
+↓
+
+Maintenance ?
+
+↓
+
+Yes
+
+↓
+
+Maintenance Page
+
+↓
+
+No
+
+↓
+
+Version Check
+
+↓
+
+Force Update ?
+
+↓
+
+Yes
+
+↓
+
+Update Page
+
+↓
+
+No
+
+↓
+
+Check Token
+
+↓
+
+Valid ?
+
+↓
+
+Dashboard
+
+↓
+
+Tidak Valid
+
+↓
+
+Portal
+
+↓
+
+Login
+```
+
+---
+
+# 577. Public Endpoint
+
+Endpoint berikut tidak memerlukan login.
+
+```
+POST /auth/login
+
+POST /auth/refresh-token
+
+POST /auth/forgot-password
+
+POST /auth/reset-password
+
+GET /app/config
+
+GET /app/version
+
+GET /maintenance
+
+GET /faq
+
+GET /contact-us
+
+GET /public/banner
+
+GET /public/news
+```
+
+---
+
+# 578. Private Endpoint
+
+Seluruh endpoint berikut wajib menggunakan JWT.
+
+```
+Authorization: Bearer access_token
+```
+
+---
+
+# 579. Login API
+
+```
+POST
+
+/auth/login
+```
+
+Body
+
+```json
+{
+  "username":"2023123456",
+  "password":"password",
+  "deviceId":"DEVICE123",
+  "deviceModel":"Pixel 8",
+  "platform":"Android",
+  "appVersion":"1.0.0",
+  "language":"id"
+}
+```
+
+---
+
+# 580. Login Success Response
+
+```json
+{
+  "success": true,
+  "message": "Login berhasil.",
+  "data": {
+    "accessToken":"...",
+    "refreshToken":"...",
+    "expiredIn":3600,
+    "role":"STUDENT",
+    "userId":"USR001",
+    "fullName":"Ilham Nurdiansyah"
+  }
+}
+```
+
+---
+
+# 581. Login Failed
+
+```json
+{
+  "success": false,
+  "message":"Username atau Password salah.",
+  "errors":[
+    {
+      "code":"AUTH_003"
+    }
+  ]
+}
+```
+
+---
+
+# 582. Refresh Token
+
+```
+POST
+
+/auth/refresh-token
+```
+
+Body
+
+```json
+{
+    "refreshToken":"xxxx"
+}
+```
+
+---
+
+# 583. Refresh Token Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "accessToken":"new_token",
+    "expiredIn":3600
+  }
+}
+```
+
+---
+
+# 584. Logout
+
+```
+POST
+
+/auth/logout
+```
+
+Body
+
+```json
+{
+    "deviceId":"DEVICE123"
+}
+```
+
+Backend menghapus refresh token.
+
+---
+
+# 585. Forgot Password
+
+```
+POST
+
+/auth/forgot-password
+```
+
+Body
+
+```json
+{
+    "username":"2023123456"
+}
+```
+
+---
+
+# 586. Forgot Password Response
+
+Backend menentukan mekanisme reset.
+
+Misalnya.
+
+- Email
+- SMS
+- WhatsApp
+- OTP
+
+Frontend hanya mengikuti response.
+
+---
+
+# 587. Verify OTP
+
+```
+POST
+
+/auth/verify-otp
+```
+
+Body
+
+```json
+{
+    "username":"2023123456",
+    "otp":"123456"
+}
+```
+
+---
+
+# 588. Reset Password
+
+```
+POST
+
+/auth/reset-password
+```
+
+Body
+
+```json
+{
+    "username":"2023123456",
+    "otp":"123456",
+    "password":"******",
+    "confirmPassword":"******"
+}
+```
+
+---
+
+# 589. Change Password
+
+Login Required.
+
+```
+PUT
+
+/profile/change-password
+```
+
+Body
+
+```json
+{
+    "oldPassword":"******",
+    "newPassword":"******",
+    "confirmPassword":"******"
+}
+```
+
+---
+
+# 590. App Configuration
+
+```
+GET
+
+/app/config
+```
+
+Digunakan saat Splash Screen.
+
+---
+
+# 591. App Config Response
+
+```json
+{
+    "success":true,
+    "data":{
+        "maintenance":false,
+        "forceUpdate":false,
+        "minimumVersion":"1.0.0",
+        "latestVersion":"1.1.0",
+        "featureVersion":"20260726",
+        "defaultLanguage":"id"
+    }
+}
+```
+
+---
+
+# 592. Version API
+
+```
+GET
+
+/app/version
+```
+
+---
+
+# 593. Version Response
+
+```json
+{
+    "success":true,
+    "data":{
+        "latestVersion":"1.1.0",
+        "minimumVersion":"1.0.0",
+        "forceUpdate":false,
+        "title":"Update Aplikasi",
+        "description":[
+            "Perbaikan Bug",
+            "Peningkatan Performa",
+            "Fitur Baru"
+        ],
+        "playStoreUrl":"...",
+        "appStoreUrl":"..."
+    }
+}
+```
+
+---
+
+# 594. Maintenance API
+
+```
+GET
+
+/app/maintenance
+```
+
+---
+
+# 595. Maintenance Response
+
+```json
+{
+    "success":true,
+    "data":{
+        "maintenance":true,
+        "title":"Maintenance",
+        "message":"Server sedang maintenance.",
+        "estimatedFinish":"2026-07-27T01:00:00Z"
+    }
+}
+```
+
+---
+
+# 596. Profile API
+
+```
+GET
+
+/profile
+```
+
+---
+
+# 597. Profile Response
+
+```json
+{
+  "success":true,
+  "data":{
+      "id":"USR001",
+      "role":"STUDENT",
+      "fullName":"Ilham Nurdiansyah",
+      "studentNumber":"2023123456",
+      "faculty":"Teknik",
+      "studyProgram":"Informatika",
+      "email":"mail@campus.ac.id",
+      "phone":"08123456789",
+      "photo":"https://...",
+      "language":"id"
+  }
+}
+```
+
+---
+
+# 598. Update Profile
+
+```
+PUT
+
+/profile
+```
+
+Body
+
+```json
+{
+    "phone":"08123456789",
+    "email":"mail@campus.ac.id",
+    "language":"id"
+}
+```
+
+---
+
+# 599. Upload Photo
+
+```
+POST
+
+/profile/photo
+```
+
+Content Type
+
+```
+multipart/form-data
+```
+
+Field
+
+```
+photo
+```
+
+---
+
+# 600. Upload Photo Response
+
+```json
+{
+    "success":true,
+    "data":{
+        "photo":"https://..."
+    }
+}
+```
+
+---
+
+# 601. Device Registration
+
+Setelah login berhasil.
+
+Frontend memanggil.
+
+```
+POST
+
+/device/register
+```
+
+Body
+
+```json
+{
+    "deviceId":"DEVICE123",
+    "platform":"Android",
+    "oneSignalPlayerId":"xxxxx",
+    "language":"id"
+}
+```
+
+---
+
+# 602. Device Update
+
+Jika user mengganti bahasa.
+
+Frontend mengirim.
+
+```
+PUT
+
+/device/update
+```
+
+---
+
+# 603. Contact Us
+
+```
+GET
+
+/contact-us
+```
+
+Response.
+
+```json
+{
+    "email":"support@kampus.ac.id",
+    "phone":"+622112345678",
+    "whatsapp":"+628123456789",
+    "website":"https://kampus.ac.id"
+}
+```
+
+---
+
+# 604. FAQ
+
+```
+GET
+
+/faq
+```
+
+Support.
+
+- Pagination
+- Search
+
+---
+
+# 605. FAQ Detail
+
+```
+GET
+
+/faq/{id}
+```
+
+---
+
+# 606. Public Banner
+
+```
+GET
+
+/public/banner
+```
+
+Digunakan pada Portal sebelum login.
+
+---
+
+# 607. Public News
+
+```
+GET
+
+/public/news
+```
+
+Support.
+
+- Pagination
+- Search
+
+---
+
+# 608. User Session
+
+```
+GET
+
+/profile/session
+```
+
+Response.
+
+- Login Time
+- Last Activity
+- Device
+- Platform
+- App Version
+
+---
+
+# 609. Revoke Session
+
+```
+DELETE
+
+/profile/session/{id}
+```
+
+Digunakan untuk logout dari device lain.
+
+Future Ready.
+
+---
+
+# 610. Common Query Parameter
+
+Semua endpoint list mendukung.
+
+```
+?page=1
+
+&limit=20
+
+&search=
+
+&sort=
+
+&direction=
+```
+
+---
+
+# 611. Common Header
+
+Semua request wajib mengirim.
+
+```
+Authorization
+
+Accept-Language
+
+Platform
+
+Device-Id
+
+Device-Model
+
+OS-Version
+
+App-Version
+
+Timezone
+
+X-Request-Id
+```
+
+---
+
+# 612. Authentication Error
+
+| Code | Description |
+|------|-------------|
+| AUTH_001 | Token Invalid |
+| AUTH_002 | Token Expired |
+| AUTH_003 | Login Failed |
+| AUTH_004 | User Locked |
+| AUTH_005 | OTP Invalid |
+| AUTH_006 | Password Expired |
+
+---
+
+# 613. Business Rules
+
+- Satu akun dapat login di beberapa device jika diizinkan backend.
+- Refresh Token memiliki masa berlaku berbeda dengan Access Token.
+- Password tidak pernah dikembalikan ke frontend.
+- Semua password disimpan menggunakan BCrypt.
+- OneSignal Player ID diperbarui setiap login.
+- Semua aktivitas login dan logout dicatat dalam Audit Log.
+
+---
+
+# 614. Production Checklist
+
+- JWT Authentication
+- Refresh Token
+- Device Registration
+- Audit Login
+- Multi Language
+- Version Check
+- Maintenance Check
+- Secure Password
+- Upload Profile Photo
+- Change Password
+- Forgot Password
+- OTP Verification
+
+---
+
+# 615. Next Part
+
+**SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_13B.md**
+
+Akan membahas:
+
+- Dashboard Mahasiswa
+- Dashboard Dosen
+- Jadwal Kuliah
+- Jadwal Mengajar
+- Kalender Akademik
+- KRS
+- KHS
+- Nilai
+- IP
+- IPK
+- Mata Kuliah
+- Semester Aktif
+- Pengajuan Cuti
+- Seluruh Request & Response API
+```

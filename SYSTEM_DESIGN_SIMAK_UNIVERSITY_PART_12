@@ -1,0 +1,864 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_12.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 12
+>
+> Module : Dummy Data, Mock API, Offline Cache & Repository Strategy
+>
+> Status : Production Ready
+>
+> Flutter : Stable
+>
+> Architecture : Clean Architecture + Repository Pattern
+
+---
+
+# 531. Purpose
+
+Selama backend belum selesai dikembangkan, seluruh aplikasi harus tetap dapat berjalan menggunakan Dummy Data.
+
+Dengan pendekatan ini:
+
+- UI dapat selesai 100%
+- Flow aplikasi dapat diuji
+- QA dapat mulai testing
+- Backend dapat dikembangkan secara paralel
+- Saat backend selesai cukup mengganti Repository
+
+---
+
+# 532. Dummy Repository Strategy
+
+Gunakan abstraction.
+
+```
+Presentation
+
+↓
+
+UseCase
+
+↓
+
+Repository
+
+↓
+
+Repository Implementation
+
+↓
+
+Dummy Repository
+atau
+API Repository
+```
+
+Presentation Layer tidak mengetahui sumber data.
+
+---
+
+# 533. Repository Interface
+
+Contoh.
+
+```
+abstract class ProfileRepository {
+
+Future<UserEntity> getProfile();
+
+}
+```
+
+Implementasi.
+
+```
+DummyProfileRepository
+
+ApiProfileRepository
+```
+
+---
+
+# 534. Switching Repository
+
+Gunakan Environment.
+
+```
+USE_DUMMY=true
+```
+
+Jika.
+
+```
+true
+```
+
+Gunakan Dummy Repository.
+
+Jika.
+
+```
+false
+```
+
+Gunakan API Repository.
+
+Tidak perlu mengubah UI.
+
+---
+
+# 535. Folder Structure
+
+```
+assets/
+
+dummy/
+
+auth/
+
+dashboard/
+
+profile/
+
+schedule/
+
+grade/
+
+billing/
+
+notification/
+
+lecturer/
+
+cms/
+
+settings/
+```
+
+---
+
+# 536. Dummy JSON Naming
+
+Gunakan snake_case.
+
+Contoh.
+
+```
+login_success.json
+
+dashboard.json
+
+profile.json
+
+schedule.json
+
+attendance.json
+
+grade.json
+
+billing.json
+
+payment_method.json
+
+notification.json
+```
+
+---
+
+# 537. Dummy Data Rule
+
+Dummy data harus menyerupai response backend.
+
+Jangan membuat struktur berbeda.
+
+---
+
+# 538. JSON Format
+
+Selalu gunakan.
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": {},
+  "meta": null,
+  "errors": []
+}
+```
+
+---
+
+# 539. Dummy Login
+
+File.
+
+```
+assets/dummy/auth/login_success.json
+```
+
+Response.
+
+```json
+{
+  "success": true,
+  "message": "Login Success",
+  "data": {
+    "accessToken": "dummy_access_token",
+    "refreshToken": "dummy_refresh_token",
+    "role": "STUDENT"
+  }
+}
+```
+
+---
+
+# 540. Dummy Dashboard
+
+```
+dashboard_student.json
+
+dashboard_lecturer.json
+```
+
+Berisi.
+
+- Banner
+- Shortcut
+- Schedule
+- Announcement
+- Billing
+- Notification
+
+---
+
+# 541. Dummy Profile
+
+```
+profile.json
+```
+
+Berisi.
+
+- Nama
+- NIM / NIDN
+- Fakultas
+- Program Studi
+- Email
+- Foto
+- Nomor HP
+
+---
+
+# 542. Dummy Schedule
+
+```
+schedule.json
+```
+
+Minimal 30 data.
+
+Agar Infinite Scroll dapat diuji.
+
+---
+
+# 543. Dummy Grade
+
+```
+grade.json
+```
+
+Berisi.
+
+- Semester
+- Mata Kuliah
+- SKS
+- Nilai
+- Bobot
+
+---
+
+# 544. Dummy Billing
+
+```
+billing.json
+```
+
+Berisi.
+
+- SPP
+- Praktikum
+- Wisuda
+- Perpustakaan
+- Laboratorium
+
+---
+
+# 545. Dummy Payment Method
+
+```
+payment_method.json
+```
+
+Contoh.
+
+```json
+[
+  {
+    "id": "bca_va",
+    "name": "BCA Virtual Account"
+  },
+  {
+    "id": "bni_va",
+    "name": "BNI Virtual Account"
+  },
+  {
+    "id": "gopay",
+    "name": "GoPay"
+  }
+]
+```
+
+Nantinya seluruh isi berasal dari API.
+
+---
+
+# 546. Dummy Notification
+
+Minimal.
+
+50 Data.
+
+Agar Pagination dapat diuji.
+
+---
+
+# 547. Dummy Announcement
+
+Minimal.
+
+20 Data.
+
+---
+
+# 548. Dummy Attendance
+
+Minimal.
+
+40 Mahasiswa.
+
+Support.
+
+- Hadir
+- Izin
+- Alpha
+- Sakit
+
+---
+
+# 549. Dummy Lecturer
+
+Berisi.
+
+- Jadwal Mengajar
+- Mata Kuliah
+- Mahasiswa
+- Nilai
+
+---
+
+# 550. Dummy CMS
+
+```
+banner.json
+
+menu.json
+
+dashboard_layout.json
+
+feature_flag.json
+
+remote_config.json
+```
+
+---
+
+# 551. Local JSON Loader
+
+Gunakan.
+
+```
+rootBundle.loadString()
+```
+
+Semua loader berada pada.
+
+```
+core/services/dummy/
+```
+
+---
+
+# 552. Delay Simulation
+
+Agar menyerupai API.
+
+Tambahkan delay.
+
+```
+500 ms
+
+1000 ms
+
+1500 ms
+```
+
+Random.
+
+---
+
+# 553. Error Simulation
+
+Tambahkan.
+
+```
+USE_FAKE_ERROR=true
+```
+
+Jika aktif.
+
+Repository mengembalikan Error.
+
+Untuk menguji Error State.
+
+---
+
+# 554. Offline Simulation
+
+Tambahkan.
+
+```
+USE_FAKE_OFFLINE=true
+```
+
+Untuk menguji halaman.
+
+```
+No Internet
+```
+
+---
+
+# 555. Session Expired Simulation
+
+Tambahkan.
+
+```
+USE_FAKE_TOKEN_EXPIRED=true
+```
+
+Untuk menguji.
+
+Refresh Token.
+
+---
+
+# 556. Mock Version
+
+```
+version.json
+```
+
+Berisi.
+
+- Latest Version
+- Minimum Version
+- Force Update
+
+---
+
+# 557. Mock Maintenance
+
+```
+maintenance.json
+```
+
+Support.
+
+```
+maintenance=true
+```
+
+---
+
+# 558. Dummy Image
+
+Semua gambar.
+
+```
+assets/images/dummy/
+```
+
+Gunakan.
+
+- Banner
+- Avatar
+- Campus
+- Event
+
+---
+
+# 559. Dummy PDF
+
+```
+assets/dummy/pdf/
+
+calendar.pdf
+
+academic_rules.pdf
+```
+
+---
+
+# 560. Dummy Lottie
+
+```
+assets/lottie/
+
+loading.json
+
+empty.json
+
+error.json
+
+success.json
+
+offline.json
+```
+
+---
+
+# 561. Local Cache Strategy
+
+Gunakan.
+
+```
+Hive
+```
+
+Cache.
+
+- Profile
+- Dashboard
+- Schedule
+- Notification
+- CMS
+
+---
+
+# 562. Cache Priority
+
+Priority.
+
+```
+Critical
+
+↓
+
+Profile
+
+↓
+
+CMS
+
+↓
+
+Dashboard
+
+↓
+
+Notification
+
+↓
+
+Schedule
+```
+
+---
+
+# 563. Cache Expired
+
+Contoh.
+
+```
+Dashboard
+
+5 menit
+
+Profile
+
+30 menit
+
+CMS
+
+60 menit
+
+Schedule
+
+15 menit
+
+Notification
+
+5 menit
+```
+
+Nilai dapat berasal dari Remote Config.
+
+---
+
+# 564. Cache Strategy
+
+Flow.
+
+```
+Open Page
+
+↓
+
+Load Cache
+
+↓
+
+Show UI
+
+↓
+
+Request API
+
+↓
+
+Update Cache
+
+↓
+
+Update UI
+```
+
+Menghasilkan pengalaman yang lebih cepat.
+
+---
+
+# 565. Offline First Rule
+
+Jika cache tersedia.
+
+Tampilkan cache terlebih dahulu.
+
+Kemudian sinkronisasi.
+
+---
+
+# 566. Refresh Strategy
+
+Pull To Refresh.
+
+```
+Ignore Cache
+
+↓
+
+Request API
+
+↓
+
+Update Cache
+
+↓
+
+Update UI
+```
+
+---
+
+# 567. Cache Invalidation
+
+Cache dihapus jika.
+
+- Logout
+- Ganti Akun
+- Token Invalid
+- Data Kadaluarsa
+- Clear Cache Manual
+
+---
+
+# 568. Migration Strategy
+
+Saat backend selesai.
+
+```
+Dummy Repository
+
+↓
+
+Api Repository
+```
+
+Tidak ada perubahan.
+
+- UI
+- Bloc
+- UseCase
+- Entity
+
+Hanya Repository Implementation.
+
+---
+
+# 569. Testing Checklist
+
+Seluruh halaman wajib diuji.
+
+- Dummy Data
+- Error
+- Empty
+- Loading
+- Offline
+- Timeout
+- Retry
+- Search
+- Pagination
+- Pull Refresh
+- Back To Top
+
+---
+
+# 570. Production Rules
+
+Sebelum Release Production.
+
+Pastikan.
+
+```
+USE_DUMMY=false
+
+USE_FAKE_ERROR=false
+
+USE_FAKE_OFFLINE=false
+
+USE_FAKE_TOKEN_EXPIRED=false
+```
+
+Tidak boleh ada Dummy Repository yang masih aktif.
+
+---
+
+# 571. Recommended Repository Registration
+
+Gunakan Dependency Injection.
+
+Contoh.
+
+```
+if (Env.useDummy) {
+
+register Dummy Repository
+
+} else {
+
+register API Repository
+
+}
+```
+
+Seluruh pergantian repository dilakukan di Dependency Injection.
+
+---
+
+# 572. Dummy API Coverage
+
+Minimal tersedia Dummy JSON untuk.
+
+- Authentication
+- Splash
+- Dashboard Mahasiswa
+- Dashboard Dosen
+- Profile
+- Jadwal Kuliah
+- Jadwal Mengajar
+- Kalender Akademik
+- KRS
+- KHS
+- Nilai
+- IP
+- IPK
+- Tagihan
+- Payment Method
+- Riwayat Pembayaran
+- Pengajuan Cuti
+- Pengumuman
+- Notification Center
+- CMS
+- Remote Config
+- Version
+- Maintenance
+- FAQ
+- Contact Us
+- Settings
+
+---
+
+# 573. Future Ready
+
+Struktur ini juga mendukung integrasi dengan.
+
+- Mockoon
+- JSON Server
+- WireMock
+- Postman Mock Server
+- Swagger Mock
+- Firebase Emulator
+
+Tanpa perubahan arsitektur.
+
+---
+
+# 574. Penutup Part 12
+
+Dengan strategi **Dummy Repository + API Repository**, pengembangan frontend dan backend dapat berjalan secara paralel. Seluruh UI, BLoC, Use Case, serta Entity tetap digunakan ketika backend selesai, sehingga proses migrasi ke API Production hanya memerlukan penggantian implementasi repository melalui Dependency Injection.
+
+---
+
+# NEXT PART
+
+**SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_13.md**
+
+Materi yang akan dibahas:
+
+- Backend REST API Specification (±100 Endpoint)
+- Authentication API
+- Student API
+- Lecturer API
+- Dashboard API
+- Schedule API
+- KRS API
+- KHS API
+- Grade API
+- Attendance API
+- Billing API
+- Payment API
+- Payment Method API
+- Notification API
+- CMS API
+- Remote Config API
+- Feature Flag API
+- Profile API
+- Upload API
+- Version API
+- Maintenance API
+- Complete Request & Response Contract
+- Endpoint Naming Standard
+- Backend Flow Production Ready

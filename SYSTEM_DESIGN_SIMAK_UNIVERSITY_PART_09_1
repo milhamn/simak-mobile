@@ -1,0 +1,754 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_09.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 09
+>
+> Module : Notification Center, CMS, Backend Driven UI, Remote Config & Feature Flag
+>
+> Status : Production Ready
+>
+> Architecture : Backend Driven
+
+---
+
+# 391. Backend Driven UI
+
+Aplikasi tidak boleh memiliki Dashboard, Menu, Banner maupun Shortcut yang bersifat hardcode.
+
+Semua konfigurasi diambil dari Backend CMS.
+
+Tujuan:
+
+- Tidak perlu update aplikasi ketika ada perubahan menu
+- Universitas dapat mengatur dashboard sendiri
+- Mendukung banyak kampus dalam satu aplikasi
+- Mendukung A/B Testing
+- Mendukung Feature Flag
+
+---
+
+# 392. CMS Overview
+
+Backend menyediakan CMS untuk mengatur:
+
+- Dashboard
+- Banner
+- Announcement
+- Shortcut
+- Menu
+- Feature Flag
+- Remote Config
+- Splash Banner
+- Popup
+- Maintenance
+- Version
+- Link
+- Survey
+- FAQ
+
+Frontend hanya melakukan render.
+
+---
+
+# 393. App Configuration API
+
+Saat Splash Screen
+
+```
+GET
+
+/app/config
+```
+
+Response
+
+```json
+{
+  "maintenance":false,
+  "forceUpdate":false,
+  "minimumVersion":"1.0.0",
+  "latestVersion":"1.1.0",
+  "theme":"default",
+  "language":"id",
+  "featureVersion":"20260726"
+}
+```
+
+---
+
+# 394. Remote Configuration API
+
+```
+GET
+
+/app/remote-config
+```
+
+Contoh Response
+
+```json
+{
+  "pollingInterval":10,
+  "attendanceRadius":100,
+  "maxUploadSize":5242880,
+  "enableLiveChat":true,
+  "enablePayment":true,
+  "enableNotificationCenter":true,
+  "dashboardVersion":2
+}
+```
+
+Frontend membaca konfigurasi tanpa hardcode.
+
+---
+
+# 395. Feature Flag
+
+Semua fitur besar menggunakan Feature Flag.
+
+Contoh
+
+```json
+{
+  "attendance":true,
+  "grade":true,
+  "payment":true,
+  "chat":false,
+  "library":false,
+  "internship":true,
+  "thesis":true,
+  "graduation":false
+}
+```
+
+Frontend otomatis menyembunyikan fitur yang tidak aktif.
+
+---
+
+# 396. Dynamic Dashboard API
+
+```
+GET
+
+/dashboard/layout
+```
+
+Response
+
+```json
+{
+  "sections":[]
+}
+```
+
+Backend menentukan urutan section.
+
+---
+
+# 397. Dashboard Section Type
+
+Support
+
+```
+Greeting
+
+Profile
+
+Banner
+
+Summary
+
+Quick Menu
+
+Schedule
+
+Announcement
+
+Billing
+
+Calendar
+
+News
+
+Survey
+
+Custom HTML (Future)
+
+Widget
+```
+
+Frontend menggunakan Factory Pattern.
+
+---
+
+# 398. Dashboard Factory
+
+```
+Section Type
+
+↓
+
+Widget Factory
+
+↓
+
+Render Widget
+```
+
+Frontend tidak menggunakan
+
+```
+if else
+```
+
+yang panjang.
+
+---
+
+# 399. Dynamic Menu API
+
+```
+GET
+
+/menu
+```
+
+Response
+
+```json
+[
+ {
+   "id":"schedule",
+   "title":"Jadwal",
+   "icon":"https://...",
+   "route":"/schedule",
+   "badge":0,
+   "sort":1,
+   "visible":true
+ }
+]
+```
+
+---
+
+# 400. Menu Visibility
+
+Backend menentukan
+
+```
+visible=true
+```
+
+atau
+
+```
+visible=false
+```
+
+Frontend hanya mengikuti.
+
+---
+
+# 401. Dynamic Shortcut
+
+Quick Menu juga berasal dari backend.
+
+Backend dapat menambah
+
+- Perpustakaan
+- PKL
+- Skripsi
+- Wisuda
+- Alumni
+
+tanpa update aplikasi.
+
+---
+
+# 402. Dynamic Banner
+
+Banner berasal dari API.
+
+Support
+
+- Image
+- Video (Future)
+- GIF
+- Lottie (Future)
+
+---
+
+# 403. Banner Type
+
+Backend dapat mengirim
+
+```
+Internal Page
+
+↓
+
+External URL
+
+↓
+
+PDF
+
+↓
+
+Payment
+
+↓
+
+Announcement
+```
+
+Frontend membuka sesuai tipe.
+
+---
+
+# 404. Banner Schedule
+
+Backend menentukan
+
+```
+Start Date
+
+End Date
+```
+
+Frontend hanya menampilkan banner yang masih aktif.
+
+---
+
+# 405. Popup Campaign
+
+Saat aplikasi dibuka.
+
+Backend dapat mengirim popup.
+
+Contoh
+
+- Survey
+- Seminar
+- PMB
+- Wisuda
+- Maintenance
+
+---
+
+# 406. Popup Rule
+
+Support
+
+```
+Only Once
+
+↓
+
+Every Login
+
+↓
+
+Every Day
+
+↓
+
+Every Version
+```
+
+---
+
+# 407. Popup Action
+
+Support
+
+```
+Open URL
+
+↓
+
+Open Internal Page
+
+↓
+
+Close
+
+↓
+
+Download PDF
+```
+
+---
+
+# 408. Survey Module
+
+Backend dapat mengirim survey.
+
+Frontend membuka
+
+```
+Survey Page
+```
+
+Support
+
+- Single Choice
+- Multiple Choice
+- Rating
+- Essay
+
+---
+
+# 409. FAQ Module
+
+Menu
+
+```
+FAQ
+```
+
+Backend dapat mengubah isi FAQ kapan saja.
+
+Support Search.
+
+---
+
+# 410. Help Center
+
+Berisi
+
+- FAQ
+- Contact Us
+- WhatsApp
+- Email
+- Call Center
+
+---
+
+# 411. News Module
+
+Berita kampus.
+
+Support
+
+- Search
+- Category
+- Infinite Scroll
+- Share
+
+---
+
+# 412. Announcement Module
+
+Pengumuman.
+
+Kategori
+
+- Akademik
+- Keuangan
+- Kemahasiswaan
+- Fakultas
+- Program Studi
+
+---
+
+# 413. Announcement Detail
+
+Support
+
+- Image
+- Attachment
+- PDF
+- Video
+- Link
+
+---
+
+# 414. Notification Center
+
+Semua notifikasi berada dalam satu halaman.
+
+---
+
+# 415. Notification Category
+
+Support
+
+```
+All
+
+Academic
+
+Finance
+
+Announcement
+
+Attendance
+
+Grade
+
+Schedule
+
+System
+```
+
+---
+
+# 416. Notification API
+
+```
+GET
+
+/notifications
+```
+
+Support
+
+- Search
+- Pagination
+- Filter
+
+---
+
+# 417. Notification Action
+
+Support
+
+- Read
+- Read All
+- Delete
+- Delete All (Future)
+
+---
+
+# 418. Notification Deep Link
+
+Backend dapat mengirim
+
+```json
+{
+  "type":"PAYMENT",
+  "target":"/billing/detail/100"
+}
+```
+
+Frontend langsung membuka halaman terkait.
+
+---
+
+# 419. Notification Badge
+
+Badge merah ditampilkan pada
+
+- Dashboard
+- Bottom Navigation
+- Profile
+
+Jumlah berasal dari backend.
+
+---
+
+# 420. OneSignal Strategy
+
+OneSignal hanya sebagai media pengiriman.
+
+Data detail tetap diambil melalui API.
+
+Flow
+
+```
+Push Notification
+
+↓
+
+Notification ID
+
+↓
+
+Get Detail API
+
+↓
+
+Open Page
+```
+
+---
+
+# 421. Dynamic Language
+
+Backend dapat mengirim teks multilingual.
+
+Contoh
+
+```json
+{
+   "title":{
+      "id":"Tagihan Baru",
+      "en":"New Billing"
+   }
+}
+```
+
+Frontend memilih sesuai locale.
+
+---
+
+# 422. CMS Cache
+
+Semua konfigurasi CMS disimpan di cache.
+
+Jika offline.
+
+Frontend menggunakan konfigurasi terakhir.
+
+---
+
+# 423. CMS Version
+
+Backend mengirim
+
+```
+featureVersion
+```
+
+Jika berubah.
+
+Frontend otomatis refresh konfigurasi.
+
+---
+
+# 424. Feature Permission
+
+Selain role.
+
+Backend juga dapat menentukan permission.
+
+Contoh
+
+```
+Can View Grade
+
+Can Edit Attendance
+
+Can Publish Grade
+```
+
+Frontend menyembunyikan tombol jika tidak memiliki permission.
+
+---
+
+# 425. Dynamic Form (Future)
+
+Backend dapat mengirim struktur form.
+
+Frontend membuat form otomatis.
+
+Contoh
+
+- Pengajuan Cuti
+- Pengajuan Surat
+- Survey
+
+---
+
+# 426. Remote Message
+
+Backend dapat mengirim pesan global.
+
+Contoh
+
+```
+Server akan maintenance pukul 22.00 WIB.
+```
+
+---
+
+# 427. Global Alert
+
+Alert tampil di semua halaman.
+
+Support
+
+- Success
+- Warning
+- Error
+- Information
+
+---
+
+# 428. Backend Driven Theme (Future)
+
+Backend dapat mengubah
+
+- Primary Color
+- Logo
+- Banner
+- Splash Image
+
+Untuk implementasi multi-universitas.
+
+---
+
+# 429. Analytics Event
+
+Frontend mengirim event.
+
+Contoh
+
+- Menu Click
+- Banner Click
+- Search
+- Payment
+- Login
+- Logout
+- Download PDF
+- Share
+
+---
+
+# 430. Production Rules
+
+Seluruh data berikut **tidak boleh hardcode**:
+
+- Dashboard Layout
+- Menu
+- Banner
+- Shortcut
+- Feature Flag
+- Popup
+- Survey
+- FAQ
+- Announcement
+- Notification Badge
+- Remote Config
+- Maintenance
+- Version
+- Payment Configuration
+
+Backend menjadi **Single Source of Truth (SSOT)**.
+
+---
+
+# 431. Penutup Part 09
+
+Dengan pendekatan **Backend Driven UI**, universitas dapat mengubah sebagian besar tampilan dan perilaku aplikasi tanpa melakukan update ke Play Store maupun App Store. Frontend menjadi lebih fleksibel, reusable, dan siap mendukung pengembangan jangka panjang.
+
+**PART 10** akan membahas **API Standard & Backend Contract**, meliputi:
+
+- Standar REST API
+- Request & Response Format
+- Pagination
+- Sorting
+- Filtering
+- Error Code
+- Validation
+- Authentication Header
+- Upload & Download
+- Versioning
+- API Naming Convention
+- HTTP Status Standard
+- Audit & Security Header
+- Best Practice Spring Boot API Design

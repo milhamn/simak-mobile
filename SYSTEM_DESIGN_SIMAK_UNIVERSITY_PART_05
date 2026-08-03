@@ -1,0 +1,861 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_05.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 05
+>
+> Module : Student Dashboard
+>
+> Status : Production Ready
+
+---
+
+# 176. Student Dashboard Overview
+
+Dashboard Mahasiswa merupakan halaman utama setelah mahasiswa berhasil login.
+
+Dashboard harus mampu memberikan seluruh informasi penting tanpa mahasiswa harus membuka banyak menu.
+
+Prinsip Dashboard:
+
+- Cepat
+- Informatif
+- Ringan
+- Responsive
+- Personalized
+- Realtime
+- Mudah dikembangkan
+
+---
+
+# 177. Dashboard Goals
+
+Mahasiswa dapat melihat:
+
+- Jadwal Hari Ini
+- Status Akademik
+- Semester Aktif
+- IP Semester
+- IPK
+- Total SKS
+- Tagihan
+- Pengumuman
+- Kalender Akademik
+- Notifikasi
+- Quick Menu
+
+dalam satu halaman.
+
+---
+
+# 178. Dashboard Layout
+
+```
+------------------------------------------------
+
+Safe Area
+
+------------------------------------------------
+
+Greeting Header
+
+------------------------------------------------
+
+Profile Card
+
+------------------------------------------------
+
+Academic Summary
+
+------------------------------------------------
+
+Quick Menu
+
+------------------------------------------------
+
+Today's Schedule
+
+------------------------------------------------
+
+Today's Agenda
+
+------------------------------------------------
+
+Active Billing
+
+------------------------------------------------
+
+Latest Announcement
+
+------------------------------------------------
+
+Latest Notification
+
+------------------------------------------------
+
+Academic Calendar
+
+------------------------------------------------
+
+Footer
+
+------------------------------------------------
+```
+
+---
+
+# 179. Greeting Section
+
+Menampilkan
+
+```
+Selamat Pagi,
+
+Ilham Nurdiansyah 👋
+```
+
+Disertai
+
+- Foto Profil
+- Nama
+- Program Studi
+- Semester Aktif
+
+---
+
+# 180. Greeting Logic
+
+Greeting otomatis berubah berdasarkan waktu.
+
+```
+05-10
+
+Selamat Pagi
+
+10-15
+
+Selamat Siang
+
+15-18
+
+Selamat Sore
+
+18-05
+
+Selamat Malam
+```
+
+---
+
+# 181. Profile Header Card
+
+Menampilkan
+
+- Foto
+- Nama
+- NIM
+- Fakultas
+- Program Studi
+- Semester
+- Status Akademik
+
+Klik card
+
+↓
+
+Halaman Profile
+
+---
+
+# 182. Dashboard Summary
+
+Widget statistik.
+
+Minimal
+
+```
+IP Semester
+
+↓
+
+IPK
+
+↓
+
+SKS Tempuh
+
+↓
+
+Semester Aktif
+```
+
+Semua menggunakan
+
+```
+AppStatisticCard
+```
+
+---
+
+# 183. Academic Status
+
+Menampilkan
+
+```
+Aktif
+
+Cuti
+
+Lulus
+
+Drop Out
+
+Tidak Aktif
+```
+
+Menggunakan badge warna.
+
+---
+
+# 184. Quick Menu
+
+Grid Menu.
+
+Minimal
+
+```
+Jadwal
+
+KRS
+
+Nilai
+
+Kalender
+
+Tagihan
+
+Pengumuman
+
+Notifikasi
+
+Profile
+```
+
+Future
+
+```
+Surat
+
+PKL
+
+Skripsi
+
+Perpustakaan
+
+Wisuda
+```
+
+---
+
+# 185. Grid Menu
+
+Menggunakan
+
+```
+AppGridMenu
+```
+
+Support
+
+- Icon
+- Badge
+- Notification Count
+- Label
+
+---
+
+# 186. Dashboard API
+
+```
+GET
+
+/dashboard/student
+```
+
+Response
+
+```
+Greeting
+
+Profile
+
+Summary
+
+Schedule Today
+
+Announcement
+
+Notification
+
+Billing
+
+Calendar
+
+Quick Menu
+```
+
+Satu endpoint untuk mengurangi request.
+
+---
+
+# 187. Dashboard Loading
+
+Menggunakan
+
+```
+Dashboard Skeleton
+```
+
+Tidak boleh loading satu per satu.
+
+---
+
+# 188. Dashboard Refresh
+
+Support
+
+```
+Pull To Refresh
+```
+
+Reload
+
+- Dashboard
+- Notification
+- Billing
+- Schedule
+
+---
+
+# 189. Today's Schedule
+
+Card
+
+Menampilkan
+
+- Mata Kuliah
+- Jam
+- Ruangan
+- Gedung
+- Dosen
+
+---
+
+# 190. Schedule Empty
+
+Jika tidak ada jadwal
+
+Tampilkan
+
+```
+Tidak ada jadwal hari ini.
+```
+
+beserta ilustrasi.
+
+---
+
+# 191. Schedule Card
+
+Support
+
+- Warna berdasarkan mata kuliah
+- Jam mulai
+- Jam selesai
+- Badge
+
+---
+
+# 192. Next Schedule
+
+Jika masih ada jadwal berikutnya
+
+Tampilkan countdown.
+
+Contoh
+
+```
+Mulai dalam
+
+1 Jam 15 Menit
+```
+
+---
+
+# 193. Active Billing
+
+Menampilkan
+
+- Total Tagihan
+- Jatuh Tempo
+- Status
+
+Button
+
+```
+Bayar Sekarang
+```
+
+---
+
+# 194. Billing Badge
+
+Status
+
+```
+Belum Bayar
+
+↓
+
+Sebagian
+
+↓
+
+Lunas
+
+↓
+
+Terlambat
+```
+
+---
+
+# 195. Latest Announcement
+
+Menampilkan
+
+5 pengumuman terbaru.
+
+Klik
+
+↓
+
+Detail Pengumuman
+
+---
+
+# 196. Latest Notification
+
+Menampilkan
+
+5 notifikasi terakhir.
+
+Klik
+
+↓
+
+Notification Center
+
+---
+
+# 197. Academic Calendar
+
+Menampilkan
+
+Agenda terdekat.
+
+Contoh
+
+```
+Ujian Tengah Semester
+
+↓
+
+Registrasi
+
+↓
+
+Wisuda
+
+↓
+
+Pengisian KRS
+```
+
+---
+
+# 198. Dashboard Banner
+
+Future
+
+Backend dapat mengirim banner.
+
+Misalnya
+
+```
+PMB
+
+↓
+
+Seminar
+
+↓
+
+Beasiswa
+
+↓
+
+Lomba
+```
+
+Support slider.
+
+---
+
+# 199. Floating Action Button
+
+Future
+
+Digunakan untuk
+
+```
+Chat
+
+↓
+
+Help Center
+
+↓
+
+Virtual Assistant
+```
+
+---
+
+# 200. Dashboard State
+
+```
+Initial
+
+↓
+
+Loading
+
+↓
+
+Loaded
+
+↓
+
+Refreshing
+
+↓
+
+Error
+```
+
+---
+
+# 201. Dashboard Bloc
+
+```
+DashboardBloc
+
+DashboardEvent
+
+DashboardState
+```
+
+---
+
+# 202. Dashboard Event
+
+Minimal
+
+```
+Load Dashboard
+
+Refresh Dashboard
+
+Open Menu
+
+Open Notification
+
+Open Billing
+```
+
+---
+
+# 203. Dashboard State Model
+
+Berisi
+
+```
+Profile
+
+Summary
+
+Schedule
+
+Announcement
+
+Billing
+
+Notification
+
+Calendar
+
+Loading
+
+Error
+```
+
+---
+
+# 204. Dashboard Cache
+
+Dashboard terakhir disimpan.
+
+Jika offline
+
+Tetap menampilkan cache.
+
+---
+
+# 205. Offline Dashboard
+
+Jika internet terputus
+
+Dashboard tetap tampil.
+
+Namun
+
+Menampilkan badge
+
+```
+Offline Mode
+```
+
+---
+
+# 206. Dashboard Animation
+
+Gunakan animasi ringan.
+
+Contoh
+
+- Fade
+- Slide
+- Scale
+
+Tidak berlebihan.
+
+---
+
+# 207. Dashboard Performance
+
+Semua card
+
+menggunakan
+
+```
+const Widget
+```
+
+jika memungkinkan.
+
+---
+
+# 208. Refresh Indicator
+
+Saat refresh
+
+gunakan
+
+```
+RefreshIndicator
+```
+
+bukan tombol refresh.
+
+---
+
+# 209. Dashboard Scroll
+
+Menggunakan
+
+```
+CustomScrollView
+```
+
+atau
+
+```
+NestedScrollView
+```
+
+agar performa lebih baik.
+
+---
+
+# 210. Sticky Header
+
+Future
+
+Header dapat mengecil saat scroll.
+
+---
+
+# 211. Notification Badge
+
+Badge merah muncul pada
+
+- Notification
+- Announcement
+- Billing
+
+Jika ada data belum dibaca.
+
+---
+
+# 212. Search Dashboard
+
+Future
+
+Global Search
+
+Mencari
+
+- Mata Kuliah
+- Jadwal
+- Nilai
+- Pengumuman
+- Tagihan
+
+---
+
+# 213. Dashboard Theme
+
+Semua card mengikuti
+
+```
+AppTheme
+```
+
+Tidak boleh membuat warna sendiri.
+
+---
+
+# 214. Dashboard Error Handling
+
+Jika API gagal
+
+Tetap tampilkan
+
+- Cached Dashboard
+- Retry Button
+
+---
+
+# 215. Empty Widget
+
+Jika section kosong
+
+Tidak menghilangkan section.
+
+Tetap tampil dengan
+
+```
+Empty State
+```
+
+---
+
+# 216. Dashboard Accessibility
+
+Support
+
+- Dynamic Text
+- Screen Reader
+- High Contrast
+
+---
+
+# 217. Dashboard Analytics
+
+Future
+
+Backend dapat mengetahui
+
+- Menu paling sering dibuka
+- Lama membuka dashboard
+- Refresh count
+
+---
+
+# 218. Dashboard Security
+
+Dashboard hanya menampilkan data milik user yang sedang login.
+
+Tidak boleh menggunakan parameter user yang dikirim dari frontend sebagai sumber kebenaran.
+
+Backend mengambil data berdasarkan token.
+
+---
+
+# 219. Dashboard Testing
+
+Minimal
+
+- Unit Test Bloc
+- Widget Test
+- Integration Test
+- API Mock Test
+
+---
+
+# 220. Dashboard Future Enhancement
+
+Fitur yang telah dipersiapkan:
+
+- Widget yang bisa diatur pengguna
+- Drag & Drop Quick Menu
+- Tema Dashboard
+- Kalender mini interaktif
+- AI Assistant Kampus
+- Chat dengan Dosen Wali
+- Reminder Tugas
+- Reminder Ujian
+- Jadwal Ruang Kuliah
+- Status Kehadiran
+- Progress Studi
+- Target Kelulusan
+
+---
+
+# 221. Penutup Part 05
+
+Dashboard Mahasiswa menjadi pusat aktivitas akademik mahasiswa dengan tampilan modern, cepat, dan informatif. Seluruh data dirancang untuk menggunakan satu endpoint dashboard agar proses loading lebih efisien, didukung cache lokal, skeleton loading, pull-to-refresh, serta arsitektur BLoC yang mudah dikembangkan.
+
+Pada **PART 06** akan dibahas **modul Akademik Mahasiswa** secara lengkap, termasuk:
+
+- Jadwal Kuliah
+- Detail Jadwal
+- Kalender Akademik
+- KRS
+- KHS
+- Nilai
+- IP & IPK
+- Riwayat Semester
+- Detail Mata Kuliah
+- Search
+- Filter
+- Infinite Scroll
+- Download PDF
+- Share Data
+- Dummy JSON
+- API Contract
+- State Management
+- Full Flow Production Ready

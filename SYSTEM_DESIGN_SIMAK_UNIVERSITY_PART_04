@@ -1,0 +1,1073 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_04.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 04
+>
+> Module : Authentication, Portal, Profile, Settings
+>
+> Status : Production Ready
+
+---
+
+# 131. Authentication Module
+
+Authentication merupakan gerbang utama aplikasi.
+
+Seluruh proses login, logout, validasi session, refresh token, forgot password, change password, dan pengecekan role dikelola oleh module ini.
+
+Folder:
+
+```
+features/
+
+authentication/
+
+data/
+
+domain/
+
+presentation/
+```
+
+---
+
+# 132. Authentication Flow
+
+```
+Open App
+
+↓
+
+Splash Screen
+
+↓
+
+Initialize Application
+
+↓
+
+Check Internet
+
+↓
+
+Check Maintenance
+
+↓
+
+Check App Version
+
+↓
+
+Load Local Configuration
+
+↓
+
+Check Access Token
+
+↓
+
+Valid ?
+
+↓
+
+YES ---------------------- NO
+
+↓                           ↓
+
+Dashboard               Portal
+
+```
+
+---
+
+# 133. Portal Screen
+
+Portal adalah halaman publik.
+
+Tidak membutuhkan login.
+
+## Komponen
+
+- Logo Universitas
+- Lottie Animation
+- Nama Aplikasi
+- Versi Aplikasi
+- Build Number
+- Login Mahasiswa
+- Login Dosen
+- Tentang Aplikasi
+- Kontak
+- Kebijakan Privasi
+- Syarat & Ketentuan
+
+---
+
+## Future
+
+Dapat ditambahkan
+
+- Login Orang Tua
+- Login Alumni
+- Login Staff
+
+tanpa mengubah struktur.
+
+---
+
+# 134. Splash Screen
+
+Splash dibuat sebagai halaman sendiri.
+
+Bukan hanya logo.
+
+Komponen
+
+```
+Logo Universitas
+
+↓
+
+Lottie
+
+↓
+
+Loading Indicator
+
+↓
+
+Progress Text
+
+↓
+
+App Version
+
+↓
+
+Build Number
+```
+
+---
+
+## Startup Flow
+
+```
+Initialize Theme
+
+↓
+
+Initialize Locale
+
+↓
+
+Initialize Storage
+
+↓
+
+Initialize Secure Storage
+
+↓
+
+Initialize Dependency Injection
+
+↓
+
+Initialize Logger
+
+↓
+
+Initialize OneSignal
+
+↓
+
+Initialize Connectivity
+
+↓
+
+Initialize Package Info
+
+↓
+
+Load Device Information
+
+↓
+
+Check Maintenance
+
+↓
+
+Check Version
+
+↓
+
+Check Login
+
+↓
+
+Navigate
+```
+
+---
+
+# 135. Login Role
+
+Saat ini tersedia
+
+```
+Mahasiswa
+
+Dosen
+```
+
+Backend menentukan role.
+
+Frontend hanya membaca.
+
+---
+
+# 136. Login Page
+
+Komponen
+
+- Logo
+- Welcome Text
+- Username / NIM / NIDN
+- Password
+- Show Password
+- Remember Login
+- Forgot Password
+- Login Button
+- Loading Button
+- App Version
+
+---
+
+# 137. Validation
+
+Username
+
+- Required
+
+Password
+
+- Required
+
+Minimal
+
+```
+8 karakter
+```
+
+---
+
+# 138. Login Flow
+
+```
+Klik Login
+
+↓
+
+Validation
+
+↓
+
+Loading
+
+↓
+
+API Login
+
+↓
+
+Success
+
+↓
+
+Save Token
+
+↓
+
+Save User
+
+↓
+
+Save Role
+
+↓
+
+Dashboard
+```
+
+---
+
+# 139. Login Error
+
+Jika gagal
+
+Tampilkan
+
+```
+Dialog
+
+atau
+
+Snackbar
+```
+
+Tidak menggunakan Toast.
+
+---
+
+# 140. Remember Login
+
+Jika aktif
+
+User tidak perlu login ulang.
+
+Tetap mengikuti masa berlaku token.
+
+---
+
+# 141. Forgot Password
+
+Halaman
+
+```
+forgot_password_page
+```
+
+---
+
+## Flow
+
+```
+Input
+
+↓
+
+Email / Username / NIM / NIDN
+
+↓
+
+Send OTP
+
+↓
+
+Verification
+
+↓
+
+New Password
+
+↓
+
+Success
+```
+
+---
+
+# 142. Forgot Password Components
+
+- Illustration
+- Email / Username
+- Send OTP
+- Verification Code
+- Password Baru
+- Konfirmasi Password
+
+---
+
+# 143. OTP
+
+Future Ready
+
+Support
+
+- Email OTP
+- SMS OTP
+- WhatsApp OTP
+
+---
+
+# 144. Change Password
+
+Hanya untuk user yang sudah login.
+
+Menu
+
+```
+Profile
+
+↓
+
+Security
+
+↓
+
+Change Password
+```
+
+---
+
+## Flow
+
+```
+Current Password
+
+↓
+
+New Password
+
+↓
+
+Confirmation
+
+↓
+
+API
+
+↓
+
+Success
+
+↓
+
+Logout
+
+↓
+
+Login Again
+```
+
+---
+
+# 145. Password Rule
+
+Minimal
+
+```
+8 karakter
+```
+
+Harus mengandung
+
+- Huruf Besar
+- Huruf Kecil
+- Angka
+
+Future
+
+Special Character
+
+---
+
+# 146. Logout
+
+Flow
+
+```
+Klik Logout
+
+↓
+
+Confirmation Dialog
+
+↓
+
+Clear Local Storage
+
+↓
+
+Clear Secure Storage
+
+↓
+
+Remove Session
+
+↓
+
+Portal
+```
+
+---
+
+# 147. Session Expired
+
+Jika
+
+```
+401 Unauthorized
+```
+
+Maka
+
+```
+Refresh Token
+
+↓
+
+Success ?
+
+↓
+
+YES
+
+Retry
+
+↓
+
+NO
+
+↓
+
+Logout
+
+↓
+
+Portal
+```
+
+---
+
+# 148. User Session
+
+Disimpan
+
+```
+Secure Storage
+```
+
+Data
+
+- Access Token
+- Refresh Token
+- Login Time
+- User ID
+
+---
+
+# 149. Profile Module
+
+Folder
+
+```
+profile/
+
+data/
+
+domain/
+
+presentation/
+```
+
+---
+
+# 150. Profile Page
+
+Menampilkan
+
+- Foto
+- Nama
+- Role
+- Fakultas
+- Program Studi
+- Email
+- Nomor HP
+- NIM / NIDN
+
+---
+
+# 151. Edit Profile
+
+User dapat mengubah
+
+- Nomor HP
+- Email
+- Alamat
+- Foto Profil
+
+Data tertentu
+
+tidak dapat diubah
+
+misalnya
+
+- NIM
+- NIDN
+- Nama
+
+ditentukan backend.
+
+---
+
+# 152. Change Profile Picture
+
+Support
+
+```
+Camera
+
+Gallery
+```
+
+Flow
+
+```
+Pick Image
+
+↓
+
+Crop
+
+↓
+
+Compress
+
+↓
+
+Preview
+
+↓
+
+Upload
+
+↓
+
+Update Profile
+```
+
+---
+
+# 153. Image Compression
+
+Sebelum upload
+
+wajib
+
+- Resize
+- Compress
+
+agar upload lebih cepat.
+
+---
+
+# 154. Profile Menu
+
+Minimal
+
+```
+My Profile
+
+Edit Profile
+
+Change Password
+
+Language
+
+Notification
+
+Share App
+
+Rate App
+
+Contact Us
+
+Privacy Policy
+
+Terms
+
+About
+
+Logout
+```
+
+---
+
+# 155. Share App
+
+Menggunakan
+
+```
+share_plus
+```
+
+Isi
+
+```
+Nama Aplikasi
+
+Play Store Link
+
+App Store Link
+```
+
+---
+
+# 156. Rate App
+
+Android
+
+↓
+
+Google Play
+
+iOS
+
+↓
+
+App Store
+
+---
+
+# 157. Contact Us
+
+Support
+
+```
+Email
+
+WhatsApp
+
+Website
+
+Call Center
+
+Google Maps
+```
+
+---
+
+# 158. About
+
+Menampilkan
+
+- Logo
+- Versi
+- Build Number
+- Copyright
+- Developer
+- Website
+
+---
+
+# 159. Settings Module
+
+Folder
+
+```
+settings/
+
+presentation/
+
+domain/
+
+data/
+```
+
+---
+
+# 160. Settings
+
+Minimal
+
+```
+Theme
+
+Language
+
+Notification
+
+About
+
+Privacy Policy
+
+Terms
+
+Logout
+```
+
+---
+
+# 161. Theme Setting
+
+Support
+
+```
+Light
+
+Dark
+
+System
+```
+
+Disimpan
+
+```
+Shared Preferences
+```
+
+---
+
+# 162. Language Setting
+
+Default
+
+```
+Bahasa Indonesia
+```
+
+Support
+
+```
+Indonesia
+
+English
+```
+
+Future
+
+```
+Arabic
+
+Japanese
+
+Chinese
+```
+
+---
+
+# 163. Change Language Flow
+
+```
+Pilih Bahasa
+
+↓
+
+Save Preference
+
+↓
+
+Reload Localization
+
+↓
+
+Refresh UI
+```
+
+Tidak perlu restart aplikasi.
+
+---
+
+# 164. Push Notification Setting
+
+User dapat
+
+- Enable
+- Disable
+
+Kategori
+
+```
+Academic
+
+Finance
+
+Announcement
+
+System
+```
+
+---
+
+# 165. App Information
+
+Halaman
+
+```
+About
+```
+
+Menampilkan
+
+- App Version
+- Build Number
+- Last Update
+- Device Information
+
+---
+
+# 166. Device Information
+
+Ditampilkan
+
+- Device Model
+- OS Version
+- App Version
+- Build Number
+- Language
+
+---
+
+# 167. Security Setting
+
+Future
+
+Support
+
+- Fingerprint
+- Face ID
+- PIN
+
+---
+
+# 168. Delete Account
+
+Future
+
+Flow
+
+```
+Confirmation
+
+↓
+
+Reason
+
+↓
+
+API
+
+↓
+
+Delete
+
+↓
+
+Logout
+```
+
+---
+
+# 169. Notification Permission
+
+Saat pertama login
+
+Aplikasi meminta izin
+
+```
+Notification
+```
+
+Jika ditolak
+
+tetap bisa menggunakan aplikasi.
+
+---
+
+# 170. OneSignal Registration
+
+Setelah login
+
+```
+Login Success
+
+↓
+
+Get Player ID
+
+↓
+
+Register Device
+
+↓
+
+Backend
+```
+
+Backend mengetahui device aktif.
+
+---
+
+# 171. Auto Login
+
+Jika token masih valid
+
+```
+Splash
+
+↓
+
+Dashboard
+```
+
+Tanpa membuka Portal.
+
+---
+
+# 172. Login Analytics
+
+Future
+
+Backend dapat mencatat
+
+- Login Time
+- Device
+- Platform
+- Version
+- Language
+
+---
+
+# 173. Global Authentication Guard
+
+Semua halaman private menggunakan
+
+```
+go_router redirect
+```
+
+Jika belum login
+
+↓
+
+Portal
+
+---
+
+# 174. Access Based Navigation
+
+Role
+
+```
+Mahasiswa
+```
+
+Tidak dapat membuka
+
+```
+Input Nilai
+```
+
+Role
+
+```
+Dosen
+```
+
+Tidak dapat membuka
+
+```
+KRS
+```
+
+Validasi dilakukan oleh backend dan frontend.
+
+---
+
+# 175. Penutup Part 04
+
+Part ini mendefinisikan seluruh proses autentikasi dan pengelolaan akun, mulai dari splash screen, portal, login, forgot password, perubahan password, profil, pengaturan, hingga integrasi OneSignal dan pengelolaan sesi pengguna.
+
+Pada **PART 05** akan dibahas **Dashboard Mahasiswa**, meliputi desain dashboard modern, quick action, jadwal hari ini, IPK, IPS, SKS, kalender akademik, pengumuman, tagihan, notifikasi, widget statistik, serta seluruh flow dan state management untuk halaman utama mahasiswa.

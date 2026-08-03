@@ -1,0 +1,1005 @@
+# SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_16.md
+
+> Version : 1.0.0
+>
+> Project : SIMAK Mobile Universitas
+>
+> Part : 16
+>
+> Module : Flutter Design System, UI/UX Guideline & Reusable Component Standard
+>
+> Status : Production Ready
+>
+> Flutter : Stable
+>
+> Material Design : Material 3
+
+---
+
+# 826. Objective
+
+Dokumen ini menjadi standar seluruh tampilan aplikasi.
+
+Seluruh halaman wajib menggunakan Design System yang sama.
+
+Tujuan:
+
+- Konsisten
+- Mudah dikembangkan
+- Mudah di-maintain
+- Modern
+- Material 3
+- Reusable
+
+---
+
+# 827. Design Principle
+
+Gunakan prinsip.
+
+- Clean
+- Modern
+- Minimalist
+- Professional
+- Mobile First
+- Accessibility First
+
+---
+
+# 828. Color System
+
+Seluruh warna berada pada.
+
+```
+lib/core/theme/
+```
+
+File.
+
+```
+app_colors.dart
+
+app_theme.dart
+
+app_theme_extension.dart
+```
+
+---
+
+# 829. Theme Management
+
+Gunakan.
+
+```
+ThemeData
+
+ThemeExtension
+```
+
+Jangan pernah menggunakan.
+
+```dart
+Colors.blue
+
+Colors.red
+
+Colors.green
+```
+
+langsung di widget.
+
+---
+
+# 830. Theme Structure
+
+```
+AppTheme
+
+↓
+
+Light Theme
+
+Dark Theme
+
+↓
+
+Color Extension
+
+↓
+
+Widget
+```
+
+---
+
+# 831. Primary Color
+
+Semua berasal dari.
+
+```
+AppColors.primary
+```
+
+Bukan hardcode.
+
+---
+
+# 832. Semantic Color
+
+Minimal tersedia.
+
+```
+Primary
+
+Secondary
+
+Success
+
+Warning
+
+Error
+
+Info
+
+Background
+
+Surface
+
+Border
+
+Divider
+
+Disable
+
+Skeleton
+
+Shimmer
+```
+
+---
+
+# 833. Typography
+
+Gunakan.
+
+```
+Google Fonts
+
+Inter
+```
+
+Alternatif.
+
+```
+Plus Jakarta Sans
+```
+
+---
+
+# 834. Font Size
+
+```
+Display Large
+
+Display Medium
+
+Headline
+
+Title
+
+Body
+
+Label
+
+Caption
+```
+
+Semua berada pada.
+
+```
+AppTextStyle
+```
+
+---
+
+# 835. Spacing
+
+Gunakan.
+
+```
+AppSpacing
+```
+
+```
+2
+
+4
+
+8
+
+12
+
+16
+
+20
+
+24
+
+32
+
+40
+
+48
+
+64
+```
+
+---
+
+# 836. Radius
+
+```
+AppRadius
+
+4
+
+8
+
+12
+
+16
+
+20
+
+24
+
+32
+```
+
+---
+
+# 837. Elevation
+
+Gunakan.
+
+```
+0
+
+1
+
+2
+
+4
+
+8
+```
+
+Hindari shadow berlebihan.
+
+---
+
+# 838. Icon
+
+Gunakan.
+
+```
+Material Symbols Rounded
+```
+
+Fallback.
+
+```
+Font Awesome
+```
+
+---
+
+# 839. Animation
+
+Gunakan.
+
+```
+300 ms
+```
+
+Sebagai default.
+
+---
+
+# 840. Lottie
+
+Digunakan untuk.
+
+- Splash
+- Success
+- Error
+- Empty
+- Offline
+- Maintenance
+- Update
+
+---
+
+# 841. Splash Screen
+
+Splash terdiri dari.
+
+```
+Logo
+
+↓
+
+Lottie
+
+↓
+
+Loading
+
+↓
+
+Version
+
+↓
+
+Copyright
+```
+
+---
+
+# 842. Portal Screen
+
+Halaman pertama aplikasi.
+
+Berisi.
+
+- Logo Universitas
+- Banner
+- Berita
+- Informasi
+- Tombol Login Mahasiswa
+- Tombol Login Dosen
+- Ganti Bahasa
+
+---
+
+# 843. Login Screen
+
+Komponen.
+
+- Logo
+- Username
+- Password
+- Show Password
+- Login
+- Lupa Password
+- Versi Aplikasi
+
+---
+
+# 844. Dashboard
+
+Urutan.
+
+```
+Greeting
+
+↓
+
+Banner
+
+↓
+
+Summary
+
+↓
+
+Quick Menu
+
+↓
+
+Today's Schedule
+
+↓
+
+Announcement
+
+↓
+
+Billing
+
+↓
+
+News
+```
+
+---
+
+# 845. Bottom Navigation
+
+Minimal.
+
+```
+Home
+
+Notification
+
+Profile
+```
+
+Jika diperlukan, menu lain dibuka melalui dashboard.
+
+---
+
+# 846. AppBar
+
+Gunakan.
+
+```
+Reusable AppBar
+```
+
+Support.
+
+- Back
+- Search
+- Action
+- Notification Badge
+
+---
+
+# 847. Search Bar
+
+Reusable.
+
+```
+AppSearchBar
+```
+
+Support.
+
+- Debounce
+- Clear
+- Placeholder
+- Voice Search (Future)
+
+---
+
+# 848. List Standard
+
+Semua halaman list.
+
+Wajib memiliki.
+
+- Search
+- Pull Refresh
+- Infinite Scroll
+- Skeleton
+- Empty State
+- Error State
+- Retry
+- Back To Top
+
+---
+
+# 849. Card Standard
+
+Gunakan.
+
+```
+AppCard
+```
+
+Support.
+
+- Shadow
+- Border
+- Padding
+- Radius
+
+---
+
+# 850. Button Standard
+
+```
+Primary
+
+Secondary
+
+Outlined
+
+Text
+
+Danger
+
+Success
+```
+
+Semua menggunakan.
+
+```
+AppButton
+```
+
+---
+
+# 851. TextField Standard
+
+```
+AppTextField
+```
+
+Support.
+
+- Prefix
+- Suffix
+- Validator
+- Password
+- Currency
+- Number
+- Date
+
+---
+
+# 852. Dropdown Standard
+
+Gunakan.
+
+```
+AppDropdown
+```
+
+Support.
+
+- Search
+- Infinite Scroll
+- BottomSheet
+
+---
+
+# 853. Dialog Standard
+
+Reusable.
+
+```
+Success
+
+Warning
+
+Error
+
+Confirmation
+
+Loading
+```
+
+---
+
+# 854. Bottom Sheet
+
+Reusable.
+
+```
+Filter
+
+Sort
+
+Picker
+
+Action Menu
+```
+
+---
+
+# 855. Shimmer
+
+Setiap halaman memiliki Skeleton sendiri.
+
+```
+Dashboard
+
+Profile
+
+List
+
+Detail
+
+Billing
+
+Notification
+```
+
+---
+
+# 856. Empty State
+
+Gunakan.
+
+- Lottie
+- Judul
+- Deskripsi
+- Tombol Refresh
+
+---
+
+# 857. Offline State
+
+Gunakan.
+
+- Lottie
+- Tidak Ada Internet
+- Tombol Coba Lagi
+
+---
+
+# 858. Error State
+
+Gunakan.
+
+- Icon
+- Pesan
+- Retry
+
+---
+
+# 859. Force Update
+
+Halaman khusus.
+
+Berisi.
+
+- Versi Lama
+- Versi Baru
+- Release Note
+- Tombol Update
+
+Tidak dapat di-skip jika mandatory.
+
+---
+
+# 860. Maintenance Screen
+
+Menampilkan.
+
+- Lottie
+- Judul
+- Pesan
+- Estimasi Selesai
+
+---
+
+# 861. Image Standard
+
+Gunakan.
+
+```
+CachedNetworkImage
+```
+
+Support.
+
+- Cache
+- Placeholder
+- Error
+
+---
+
+# 862. Avatar
+
+Gunakan.
+
+```
+AppAvatar
+```
+
+Support.
+
+- Network
+- Asset
+- Initial Name
+
+---
+
+# 863. Badge
+
+Gunakan.
+
+```
+AppBadge
+```
+
+Untuk.
+
+- Notification
+- Billing
+- Status
+
+---
+
+# 864. Status Chip
+
+Reusable.
+
+```
+Paid
+
+Pending
+
+Rejected
+
+Approved
+
+Expired
+
+Success
+
+Failed
+```
+
+---
+
+# 865. Responsive Rule
+
+Support.
+
+- Phone
+- Tablet
+
+Minimal.
+
+```
+360dp
+
+411dp
+
+600dp
+```
+
+---
+
+# 866. Accessibility
+
+Support.
+
+- Dynamic Font
+- Screen Reader
+- High Contrast
+- Minimum Touch Area 48dp
+
+---
+
+# 867. UX Standard
+
+Setiap request.
+
+```
+Skeleton
+
+↓
+
+Data
+
+↓
+
+Refresh
+
+↓
+
+Error jika gagal
+```
+
+Tidak menggunakan loading fullscreen untuk request kecil.
+
+---
+
+# 868. Motion Guideline
+
+Gunakan.
+
+- Fade
+- Slide
+- Scale
+
+Hindari animasi berlebihan.
+
+---
+
+# 869. Reusable Widgets
+
+Minimal tersedia.
+
+```
+AppScaffold
+
+AppButton
+
+AppTextField
+
+AppSearchBar
+
+AppCard
+
+AppDialog
+
+AppBottomSheet
+
+AppLoading
+
+AppSkeleton
+
+AppEmpty
+
+AppError
+
+AppAvatar
+
+AppBadge
+
+AppChip
+
+AppDivider
+
+AppAppBar
+
+AppPaginationView
+
+BackToTopButton
+
+AppImage
+```
+
+---
+
+# 870. UI Consistency Rule
+
+Tidak boleh.
+
+- Padding berbeda-beda.
+- Radius berbeda-beda.
+- Font berbeda-beda.
+- Warna berbeda-beda.
+- Shadow berbeda-beda.
+
+Semua mengikuti Design System.
+
+---
+
+# 871. Dark Mode
+
+Disiapkan sejak awal.
+
+Seluruh warna menggunakan Theme.
+
+Tidak boleh hardcode.
+
+---
+
+# 872. Design Token
+
+Seluruh token berada pada.
+
+```
+AppColors
+
+AppTextStyle
+
+AppSpacing
+
+AppRadius
+
+AppDuration
+
+AppElevation
+```
+
+---
+
+# 873. Screen Checklist
+
+Setiap screen wajib memiliki.
+
+- AppBar
+- Loading
+- Skeleton
+- Error
+- Empty
+- Refresh
+- Infinite Scroll (jika list)
+- Search (jika list)
+- Back To Top
+- Responsive
+- Localization
+
+---
+
+# 874. Animation Checklist
+
+Gunakan animasi hanya pada.
+
+- Splash
+- Navigation
+- Dialog
+- BottomSheet
+- List Insert
+- Refresh
+
+---
+
+# 875. Production Design Checklist
+
+✔ Material 3
+
+✔ Design Token
+
+✔ Theme Extension
+
+✔ Reusable Widget
+
+✔ Dark Mode Ready
+
+✔ Accessibility
+
+✔ Infinite Scroll
+
+✔ Search
+
+✔ Refresh
+
+✔ Skeleton
+
+✔ Error State
+
+✔ Empty State
+
+✔ Offline State
+
+✔ Force Update
+
+✔ Maintenance
+
+✔ Responsive
+
+✔ Localization
+
+✔ Animation Standard
+
+---
+
+# 876. Final Recommendation
+
+Seluruh developer dan AI generator **wajib** mengikuti Design System ini.
+
+Tidak diperbolehkan membuat widget, warna, spacing, typography, ataupun layout baru yang tidak mengikuti standar pada dokumen ini.
+
+Dengan demikian seluruh aplikasi akan tetap konsisten, mudah dipelihara, scalable, dan memiliki kualitas UI setara aplikasi production.
+
+---
+
+# NEXT PART (Sangat Direkomendasikan)
+
+## SYSTEM_DESIGN_SIMAK_UNIVERSITY_PART_17.md
+
+**Backend & Flutter Complete Folder Structure + Naming Convention + Boilerplate**
+
+Berisi:
+
+- Struktur folder Flutter lengkap (±250 folder)
+- Struktur folder Spring Boot lengkap
+- Penamaan file
+- Penamaan class
+- Penamaan Bloc
+- Penamaan Event
+- Penamaan State
+- Penamaan DTO
+- Penamaan Entity
+- Penamaan Repository
+- Penamaan UseCase
+- Struktur DI (GetIt + Injectable)
+- Struktur Theme
+- Struktur Localization
+- Struktur Assets
+- Struktur Dummy Data
+- Struktur Unit Test
+- Struktur Integration Test
+- Struktur CI/CD
+- Struktur Docker
+- Boilerplate generator siap digunakan AI
