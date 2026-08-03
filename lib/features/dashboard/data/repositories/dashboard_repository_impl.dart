@@ -1,14 +1,20 @@
 import 'package:simak_mobile/core/env/env_config.dart';
 import 'package:simak_mobile/core/network/api_result.dart';
+import 'package:simak_mobile/core/network/dio_client.dart';
+import 'package:simak_mobile/core/network/network_exceptions.dart';
 import 'package:simak_mobile/features/dashboard/domain/entities/academic_summary_entity.dart';
 import 'package:simak_mobile/features/dashboard/domain/entities/announcement_entity.dart';
 import 'package:simak_mobile/features/dashboard/domain/repositories/dashboard_repository.dart';
 
 class DashboardRepositoryImpl implements DashboardRepository {
+  final DioClient _dioClient;
+
+  DashboardRepositoryImpl(this._dioClient);
+
   @override
   Future<ApiResult<AcademicSummaryEntity>> getAcademicSummary() async {
-    await Future.delayed(const Duration(milliseconds: 400));
     if (EnvConfig.useDummy) {
+      await Future.delayed(const Duration(milliseconds: 400));
       return const ApiSuccess(
         AcademicSummaryEntity(
           ipk: 3.82,
@@ -19,13 +25,34 @@ class DashboardRepositoryImpl implements DashboardRepository {
         ),
       );
     }
-    return const ApiFailure('Server API tidak tersedia');
+
+    try {
+      final response = await _dioClient.dio.get('/mahasiswa/dashboard');
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'] as Map<String, dynamic>;
+        final summary = data['academic_summary'] as Map<String, dynamic>? ?? {};
+        final student = data['student'] as Map<String, dynamic>? ?? {};
+
+        final entity = AcademicSummaryEntity(
+          ipk: (summary['gpa'] as num?)?.toDouble() ?? 0.0,
+          ips: (summary['ips'] as num?)?.toDouble() ?? 0.0,
+          totalSks: (summary['total_sks'] as num?)?.toInt() ?? 0,
+          activeSemester: (student['semester'] as num?)?.toInt() ?? 1,
+          statusAkademik: student['status']?.toString() ?? 'Aktif',
+        );
+
+        return ApiSuccess(entity);
+      }
+      return ApiFailure(response.data?['message'] ?? 'Gagal memuat ringkasan akademik');
+    } catch (e) {
+      return ApiFailure(NetworkExceptions.getErrorMessage(e));
+    }
   }
 
   @override
   Future<ApiResult<List<AnnouncementEntity>>> getAnnouncements() async {
-    await Future.delayed(const Duration(milliseconds: 400));
     if (EnvConfig.useDummy) {
+      await Future.delayed(const Duration(milliseconds: 400));
       final list = [
         AnnouncementEntity(
           id: 'ANN-01',
@@ -51,6 +78,36 @@ class DashboardRepositoryImpl implements DashboardRepository {
       ];
       return ApiSuccess(list);
     }
-    return const ApiFailure('Server API tidak tersedia');
+
+    try {
+      final response = await _dioClient.dio.get('/portal/news', queryParameters: {'page': 1, 'limit': 5});
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'] as Map<String, dynamic>;
+        final items = data['items'] as List<dynamic>? ?? [];
+
+        final list = items.map((item) {
+          final m = item as Map<String, dynamic>;
+          DateTime parsedDate;
+          try {
+            parsedDate = DateTime.parse(m['published_at'] ?? m['createdAt'] ?? DateTime.now().toIso8601String());
+          } catch (_) {
+            parsedDate = DateTime.now();
+          }
+
+          return AnnouncementEntity(
+            id: m['id']?.toString() ?? '',
+            title: m['title']?.toString() ?? '',
+            content: m['summary']?.toString() ?? m['content']?.toString() ?? '',
+            date: parsedDate,
+            category: m['category']?.toString() ?? 'Umum',
+          );
+        }).toList();
+
+        return ApiSuccess(list);
+      }
+      return ApiFailure(response.data?['message'] ?? 'Gagal memuat pengumuman');
+    } catch (e) {
+      return ApiFailure(NetworkExceptions.getErrorMessage(e));
+    }
   }
 }

@@ -1,13 +1,19 @@
 import 'package:simak_mobile/core/env/env_config.dart';
 import 'package:simak_mobile/core/network/api_result.dart';
+import 'package:simak_mobile/core/network/dio_client.dart';
+import 'package:simak_mobile/core/network/network_exceptions.dart';
 import 'package:simak_mobile/features/grade/domain/entities/khs_item_entity.dart';
 import 'package:simak_mobile/features/grade/domain/repositories/grade_repository.dart';
 
 class GradeRepositoryImpl implements GradeRepository {
+  final DioClient _dioClient;
+
+  GradeRepositoryImpl(this._dioClient);
+
   @override
   Future<ApiResult<List<KhsItemEntity>>> getKhsBySemester(int semester) async {
-    await Future.delayed(const Duration(milliseconds: 350));
     if (EnvConfig.useDummy) {
+      await Future.delayed(const Duration(milliseconds: 350));
       final list = [
         const KhsItemEntity(
           courseCode: 'TIF501',
@@ -52,6 +58,34 @@ class GradeRepositoryImpl implements GradeRepository {
       ];
       return ApiSuccess(list);
     }
-    return const ApiFailure('Server API tidak tersedia');
+
+    try {
+      final response = await _dioClient.dio.get(
+        '/mahasiswa/khs',
+        queryParameters: {'semester': semester.toString()},
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'] as Map<String, dynamic>;
+        final grades = data['grades'] as List<dynamic>? ?? [];
+
+        final list = grades.map((g) {
+          final m = g as Map<String, dynamic>;
+          return KhsItemEntity(
+            courseCode: m['course_code']?.toString() ?? '',
+            courseName: m['course_name']?.toString() ?? '',
+            sks: (m['sks'] as num?)?.toInt() ?? 0,
+            gradeLetter: m['grade_letter']?.toString() ?? '-',
+            gradePoint: (m['grade_point'] as num?)?.toDouble() ?? 0.0,
+            lecturerName: m['lecturer_name']?.toString() ?? '',
+          );
+        }).toList();
+
+        return ApiSuccess(list);
+      }
+      return ApiFailure(response.data?['message'] ?? 'Gagal memuat KHS');
+    } catch (e) {
+      return ApiFailure(NetworkExceptions.getErrorMessage(e));
+    }
   }
 }

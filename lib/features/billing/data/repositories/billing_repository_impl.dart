@@ -1,13 +1,19 @@
 import 'package:simak_mobile/core/env/env_config.dart';
 import 'package:simak_mobile/core/network/api_result.dart';
+import 'package:simak_mobile/core/network/dio_client.dart';
+import 'package:simak_mobile/core/network/network_exceptions.dart';
 import 'package:simak_mobile/features/billing/domain/entities/billing_item_entity.dart';
 import 'package:simak_mobile/features/billing/domain/repositories/billing_repository.dart';
 
 class BillingRepositoryImpl implements BillingRepository {
+  final DioClient _dioClient;
+
+  BillingRepositoryImpl(this._dioClient);
+
   @override
   Future<ApiResult<List<BillingItemEntity>>> getBillings() async {
-    await Future.delayed(const Duration(milliseconds: 350));
     if (EnvConfig.useDummy) {
+      await Future.delayed(const Duration(milliseconds: 350));
       final list = [
         BillingItemEntity(
           id: 'BILL-01',
@@ -36,6 +42,37 @@ class BillingRepositoryImpl implements BillingRepository {
       ];
       return ApiSuccess(list);
     }
-    return const ApiFailure('Server API tidak tersedia');
+
+    try {
+      final response = await _dioClient.dio.get('/mahasiswa/tagihan');
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'] as Map<String, dynamic>;
+        final invoices = data['invoices'] as List<dynamic>? ?? [];
+
+        final list = invoices.map((inv) {
+          final m = inv as Map<String, dynamic>;
+          DateTime dueDate;
+          try {
+            dueDate = DateTime.parse(m['due_date'] ?? DateTime.now().toIso8601String());
+          } catch (_) {
+            dueDate = DateTime.now();
+          }
+
+          return BillingItemEntity(
+            id: m['id']?.toString() ?? '',
+            title: m['invoice_number'] != null ? 'Tagihan ${m['invoice_number']}' : 'Tagihan Pembayaran Kuliah',
+            amount: (m['amount'] as num?)?.toDouble() ?? 0.0,
+            dueDate: dueDate,
+            status: m['status']?.toString() ?? 'Belum Lunas',
+            virtualAccount: m['virtual_account_no']?.toString() ?? '-',
+          );
+        }).toList();
+
+        return ApiSuccess(list);
+      }
+      return ApiFailure(response.data?['message'] ?? 'Gagal memuat daftar tagihan');
+    } catch (e) {
+      return ApiFailure(NetworkExceptions.getErrorMessage(e));
+    }
   }
 }

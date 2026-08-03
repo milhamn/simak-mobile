@@ -72,13 +72,13 @@ Future<void> initServiceLocator() async {
   sl.registerSingleton<DioClient>(DioClient(sl()));
 
   // 3. Repositories
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
-  sl.registerLazySingleton<DashboardRepository>(() => DashboardRepositoryImpl());
-  sl.registerLazySingleton<ScheduleRepository>(() => ScheduleRepositoryImpl());
-  sl.registerLazySingleton<GradeRepository>(() => GradeRepositoryImpl());
-  sl.registerLazySingleton<KrsRepository>(() => KrsRepositoryImpl());
-  sl.registerLazySingleton<AttendanceRepository>(() => AttendanceRepositoryImpl());
-  sl.registerLazySingleton<BillingRepository>(() => BillingRepositoryImpl());
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<DashboardRepository>(() => DashboardRepositoryImpl(sl()));
+  sl.registerLazySingleton<ScheduleRepository>(() => ScheduleRepositoryImpl(sl()));
+  sl.registerLazySingleton<GradeRepository>(() => GradeRepositoryImpl(sl()));
+  sl.registerLazySingleton<KrsRepository>(() => KrsRepositoryImpl(sl()));
+  sl.registerLazySingleton<AttendanceRepository>(() => AttendanceRepositoryImpl(sl()));
+  sl.registerLazySingleton<BillingRepository>(() => BillingRepositoryImpl(sl()));
   sl.registerLazySingleton<PortalRepository>(() => PortalRepositoryImpl(sl()));
 
   // 4. UseCases

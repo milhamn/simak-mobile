@@ -1,13 +1,19 @@
 import 'package:simak_mobile/core/env/env_config.dart';
 import 'package:simak_mobile/core/network/api_result.dart';
+import 'package:simak_mobile/core/network/dio_client.dart';
+import 'package:simak_mobile/core/network/network_exceptions.dart';
 import 'package:simak_mobile/features/krs/domain/entities/krs_item_entity.dart';
 import 'package:simak_mobile/features/krs/domain/repositories/krs_repository.dart';
 
 class KrsRepositoryImpl implements KrsRepository {
+  final DioClient _dioClient;
+
+  KrsRepositoryImpl(this._dioClient);
+
   @override
   Future<ApiResult<List<KrsItemEntity>>> getActiveKrs() async {
-    await Future.delayed(const Duration(milliseconds: 350));
     if (EnvConfig.useDummy) {
+      await Future.delayed(const Duration(milliseconds: 350));
       final list = [
         const KrsItemEntity(
           courseCode: 'TIF501',
@@ -60,6 +66,34 @@ class KrsRepositoryImpl implements KrsRepository {
       ];
       return ApiSuccess(list);
     }
-    return const ApiFailure('Server API tidak tersedia');
+
+    try {
+      final response = await _dioClient.dio.get('/mahasiswa/krs/active');
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'] as Map<String, dynamic>;
+        final courses = data['courses'] as List<dynamic>? ?? [];
+
+        final list = courses.map((c) {
+          final m = c as Map<String, dynamic>;
+          final schedule = m['schedule_day'] != null && m['schedule_time'] != null
+              ? '${m['schedule_day']}, ${m['schedule_time']}'
+              : (m['scheduleTime']?.toString() ?? '-');
+
+          return KrsItemEntity(
+            courseCode: m['course_code']?.toString() ?? '',
+            courseName: m['course_name']?.toString() ?? '',
+            sks: (m['sks'] as num?)?.toInt() ?? 0,
+            classGroup: m['class_name']?.toString() ?? m['classGroup']?.toString() ?? 'A',
+            scheduleTime: schedule,
+            statusApproval: m['status_approval']?.toString() ?? m['status']?.toString() ?? 'Disetujui',
+          );
+        }).toList();
+
+        return ApiSuccess(list);
+      }
+      return ApiFailure(response.data?['message'] ?? 'Gagal memuat data KRS aktif');
+    } catch (e) {
+      return ApiFailure(NetworkExceptions.getErrorMessage(e));
+    }
   }
 }
