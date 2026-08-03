@@ -124,6 +124,11 @@ class AuthRepositoryImpl implements AuthRepository {
       final userDataStr = await _secureStorage.getUserData();
 
       if (token != null && userDataStr != null) {
+        if (!EnvConfig.useDummy && token.startsWith('mock_')) {
+          await _secureStorage.clearSession();
+          return const ApiSuccess(null);
+        }
+
         final map = jsonDecode(userDataStr) as Map<String, dynamic>;
         final user = UserEntity(
           id: map['id']?.toString() ?? '',

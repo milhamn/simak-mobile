@@ -28,7 +28,10 @@ class DioClient {
           }
           return handler.next(options);
         },
-        onError: (error, handler) {
+        onError: (error, handler) async {
+          if (error.response?.statusCode == 401) {
+            await _secureStorage.clearSession();
+          }
           return handler.next(error);
         },
       ),
