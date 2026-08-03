@@ -407,6 +407,46 @@ class PortalInfoEntity extends Equatable {
     );
   }
 
+  PortalInfoEntity copyWith({
+    List<BannerItemEntity>? banners,
+    List<PortalNewsEntity>? news,
+    List<AcademicAgendaEntity>? agendas,
+    List<FacultyEntity>? faculties,
+    List<FacilityEntity>? facilities,
+    List<EJournalEntity>? eJournals,
+    List<CampusAddressEntity>? campuses,
+    List<GalleryItemEntity>? gallery,
+    List<UmiUnitEntity>? units,
+    String? totalMahasiswa,
+    String? totalDosen,
+    String? totalFakultas,
+    String? totalProdi,
+    String? rektorName,
+    String? rektorSambutan,
+    String? visiMisiText,
+    String? sejarahText,
+  }) {
+    return PortalInfoEntity(
+      banners: banners ?? this.banners,
+      news: news ?? this.news,
+      agendas: agendas ?? this.agendas,
+      faculties: faculties ?? this.faculties,
+      facilities: facilities ?? this.facilities,
+      eJournals: eJournals ?? this.eJournals,
+      campuses: campuses ?? this.campuses,
+      gallery: gallery ?? this.gallery,
+      units: units ?? this.units,
+      totalMahasiswa: totalMahasiswa ?? this.totalMahasiswa,
+      totalDosen: totalDosen ?? this.totalDosen,
+      totalFakultas: totalFakultas ?? this.totalFakultas,
+      totalProdi: totalProdi ?? this.totalProdi,
+      rektorName: rektorName ?? this.rektorName,
+      rektorSambutan: rektorSambutan ?? this.rektorSambutan,
+      visiMisiText: visiMisiText ?? this.visiMisiText,
+      sejarahText: sejarahText ?? this.sejarahText,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'total_mahasiswa': totalMahasiswa,
